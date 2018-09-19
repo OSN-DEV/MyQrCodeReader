@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.DrawerLayout
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/side_menu"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+<android.support.constraint.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <android.support.constraint.Guideline
         android:id="@+id/guideline_preview_left"
@@ -20,18 +25,26 @@
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.8" />
 
-    <tenpokei.java_conf.gr.jp.myqrreader.barcode.CameraSourcePreview
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline_preview_top"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.2" />
+
+    <tenpokei.java_conf.gr.jp.myqrcodereader.barcode.CameraSourcePreview
         android:id="@+id/preview"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="30dp"
         android:background="#FF0000"
         app:layout_constraintDimensionRatio="h,3:4"
+        app:layout_constraintTop_toBottomOf="@id/guideline_preview_top"
         app:layout_constraintEnd_toStartOf="@+id/guideline_preview_right"
         app:layout_constraintStart_toStartOf="@+id/guideline_preview_left"
         app:layout_constraintTop_toTopOf="parent">
 
-        <tenpokei.java_conf.gr.jp.myqrreader.barcode.GraphicOverlay
+        <tenpokei.java_conf.gr.jp.myqrcodereader.barcode.GraphicOverlay
             android:id="@+id/graphicOverlay"
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -40,7 +53,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-    </tenpokei.java_conf.gr.jp.myqrreader.barcode.CameraSourcePreview>
+    </tenpokei.java_conf.gr.jp.myqrcodereader.barcode.CameraSourcePreview>
 
     <android.support.constraint.Guideline
         android:id="@+id/guideline_result"
@@ -49,25 +62,14 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.9" />
 
-    <LinearLayout
+    <TextView
         android:id="@+id/result"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="@id/guideline_result">
+        style="@style/TextBase"
+        android:gravity="center"
+        android:maxLines="3"
+        app:layout_constraintBottom_toBottomOf="@id/guideline_result"
+        tools:text="http://www.google.co.jp" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            tools:text="Google" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            tools:text="http://www.google.co.jp" />
-    </LinearLayout>
 
     <!--<View-->
     <!--android:layout_width="0dp"-->
@@ -117,4 +119,18 @@
 
 
 </android.support.constraint.ConstraintLayout>
+    <LinearLayout
+        android:layout_gravity="start"
+        android:layout_width="280dp"
+        android:layout_height="match_parent"
+        android:background="#fff">
 
+        <ListView
+            android:id="@+id/lis_tview"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent" />
+
+    </LinearLayout>
+
+
+</android.support.v4.widget.DrawerLayout>

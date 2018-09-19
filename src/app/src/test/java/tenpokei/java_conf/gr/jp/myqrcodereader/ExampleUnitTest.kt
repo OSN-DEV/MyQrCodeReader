@@ -1,4 +1,4 @@
-package tenpokei.java_conf.gr.jp.myqrreader
+package tenpokei.java_conf.gr.jp.myqrcodereader
 
 import org.junit.Test
 

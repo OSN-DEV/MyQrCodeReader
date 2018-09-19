@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package tenpokei.java_conf.gr.jp.myqrreader.barcode;
+package tenpokei.java_conf.gr.jp.myqrcodereader.barcode;
 
 import android.Manifest;
 import android.content.Context;

@@ -1,4 +1,4 @@
-package tenpokei.java_conf.gr.jp.myqrreader
+package tenpokei.java_conf.gr.jp.myqrcodereader
 
 import android.support.test.InstrumentationRegistry
 import android.support.test.runner.AndroidJUnit4

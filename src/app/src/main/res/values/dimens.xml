@@ -2,6 +2,6 @@
 <resources>
 
     <!-- font size -->
-    <dimen name="font_default">20sp</dimen>
+    <dimen name="font_default">16sp</dimen>
 
 </resources>
