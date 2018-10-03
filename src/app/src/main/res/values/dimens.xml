@@ -4,4 +4,6 @@
     <!-- font size -->
     <dimen name="font_default">16sp</dimen>
 
+    <dimen name="nav_menu_width">240dp</dimen>
+
 </resources>

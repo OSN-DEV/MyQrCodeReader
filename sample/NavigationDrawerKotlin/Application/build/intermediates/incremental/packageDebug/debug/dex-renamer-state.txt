@@ -1,0 +1,4 @@
+#Mon Sep 24 19:16:43 JST 2018
+base.0=N\:\\NavigationDrawerKotlin\\Application\\build\\intermediates\\transforms\\dexMerger\\debug\\0
+path.0=classes.dex
+renamed.0=classes.dex
