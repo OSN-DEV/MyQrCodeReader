@@ -1,5 +1,7 @@
 package tenpokei.java_conf.gr.jp.myqrcodereader
 
+import android.app.Activity
+
 import android.os.Bundle
 import android.os.Parcel
 import android.os.Parcelable
@@ -15,12 +17,12 @@ import android.widget.ArrayAdapter
 import android.widget.ListView
 import tenpokei.java_conf.gr.jp.myqrcodereader.barcode.SideMenuAdapter
 
-class MyQrCodeReaderMainActivity() : AppCompatActivity(), SideMenuAdapter.OnItemClickListener {
+class MyQrCodeReaderMainActivity() : Activity(), SideMenuAdapter.OnItemClickListener {
 
     private lateinit var _drawerLayout: DrawerLayout
     private lateinit var  _menuList: RecyclerView
     private lateinit var  _menuToggle: ActionBarDrawerToggle
-
+    private lateinit var _drawerToggle: ActionBarDrawerToggle
 
 
     //==============================================================================================
@@ -35,7 +37,6 @@ class MyQrCodeReaderMainActivity() : AppCompatActivity(), SideMenuAdapter.OnItem
             setDrawerShadow(R.drawable.drawer_shadow, Gravity.START)
         }
 
-
         val items = arrayOf("A")
         _menuList = findViewById<RecyclerView>(R.id.side_menu).apply {
             // Improve performance by indicating the list if fixed size.
@@ -44,10 +45,38 @@ class MyQrCodeReaderMainActivity() : AppCompatActivity(), SideMenuAdapter.OnItem
             adapter = SideMenuAdapter(items, this@MyQrCodeReaderMainActivity)
         }
 
-        this.initDrawer()
+        // Enable ActionBar app icon to behave as action to toggle nav drawer.
+        // actionBar = getActionbar
+        actionBar.run {
+            setDisplayHomeAsUpEnabled(true)
+            setHomeButtonEnabled(true)
+        }
 
-//        _menuList = findViewById<ListView>(R.id.list_tview)
-//        _menuList?.setAdapter(ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, arrayOf("A", "B")))
+        _drawerToggle = object : ActionBarDrawerToggle(
+                this,
+                _drawerLayout,
+                R.string.drawer_open,
+                R.string.drawer_close) {
+            override fun onDrawerClosed(drawerView: View?) {
+                actionBar.title = "close";
+                invalidateOptionsMenu() // Creates call to onPrepareOptionsMenu().
+            }
+
+            override fun onDrawerOpened(drawerView: View?) {
+                actionBar.title = "open"
+                invalidateOptionsMenu() // Creates call to onPrepareOptionsMenu().
+            }
+        }
+
+        // Set a custom shadow that overlays the main content when the drawer opens.
+        _drawerLayout.addDrawerListener(_drawerToggle)
+
+        if (savedInstanceState == null) {
+//            selectItem(0)
+        }
+
+
+
 
     }
 
@@ -77,13 +106,6 @@ class MyQrCodeReaderMainActivity() : AppCompatActivity(), SideMenuAdapter.OnItem
     //==============================================================================================
     // Private method
     //==============================================================================================
-    private fun initDrawer() {
-        _menuToggle = ActionBarDrawerToggle(this, _drawerLayout, R.string.app_name, R.string.app_name)
-        _menuToggle?.isDrawerIndicatorEnabled = true
-        _drawerLayout.addDrawerListener(_menuToggle!!)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setDisplayShowHomeEnabled(true)
-    }
 
 //    override fun writeToParcel(parcel: Parcel, flags: Int) {
 //
