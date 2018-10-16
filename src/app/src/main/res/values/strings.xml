@@ -1,6 +1,11 @@
 <resources>
-    <string name="app_name">My QrCode Reader</string>
+  <string name="app_name">My QR Code Reader</string>
 
-    <string name="drawer_open">open</string>
-    <string name="drawer_close">close</string>
+  <string name="drawer_open">open</string>
+  <string name="drawer_close">close</string>
+
+  <!-- side menu -->
+  <string name="side_menu_recent">recent</string>
+  <string name="side_menu_favorite">favorite</string>
+  <string name="side_menu_licence">license</string>
 </resources>

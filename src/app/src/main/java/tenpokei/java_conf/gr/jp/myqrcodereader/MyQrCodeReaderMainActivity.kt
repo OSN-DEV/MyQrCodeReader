@@ -1,27 +1,34 @@
 package tenpokei.java_conf.gr.jp.myqrcodereader
 
+import android.Manifest
 import android.app.Activity
-
+import android.content.pm.PackageManager
+import android.content.res.Configuration
+import android.os.Build
 import android.os.Bundle
-import android.os.Parcel
-import android.os.Parcelable
+import android.os.Process
+import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.RecyclerView
 import android.view.Gravity
-import android.view.Menu
 import android.view.MenuItem
-import android.view.View
-import android.widget.ArrayAdapter
-import android.widget.ListView
-import tenpokei.java_conf.gr.jp.myqrcodereader.barcode.SideMenuAdapter
+import android.widget.Toast
 
-class MyQrCodeReaderMainActivity() : Activity(), SideMenuAdapter.OnItemClickListener {
+class MyQrCodeReaderMainActivity() : Activity() {
+    // Barcode reader sample(Github)
+    // https://github.com/googlesamples/android-vision/tree/master/visionSamples/barcode-reader
+
+    // アイコンのサイズ
+    // https://backport.net/blog/2018/02/17/adaptive_icon/
+
+    // Adaptive Iconの作成
+    // https://akira-watson.com/android/adaptive-icons.html
+
+    // 少し親切なランタイムパーミッション対応
+    // https://qiita.com/caad1229/items/35bab757217b204711df
 
     private lateinit var _drawerLayout: DrawerLayout
-    private lateinit var  _menuList: RecyclerView
-    private lateinit var  _menuToggle: ActionBarDrawerToggle
     private lateinit var _drawerToggle: ActionBarDrawerToggle
 
 
@@ -30,99 +37,97 @@ class MyQrCodeReaderMainActivity() : Activity(), SideMenuAdapter.OnItemClickList
     //==============================================================================================
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_my_qr_reader_main)
+        setContentView(R.layout.activity_my_qr_code_reader_main)
 
+        // setup side menu
+        val sideMenu = SideMenuFragment.newInstance()
+        val transaction = fragmentManager.beginTransaction()
+        transaction.replace(R.id.side_menu, sideMenu)
+        transaction.addToBackStack(null)
+        transaction.commit()
+
+        // setup action bar
         _drawerLayout = findViewById<DrawerLayout>(R.id.drawer_layout).apply {
             // Set a simple drawable used for the left or right shadow.
             setDrawerShadow(R.drawable.drawer_shadow, Gravity.START)
         }
-
-        val items = arrayOf("A")
-        _menuList = findViewById<RecyclerView>(R.id.side_menu).apply {
-            // Improve performance by indicating the list if fixed size.
-            setHasFixedSize(true)
-            // Set up the drawer's list view with items and click listener.
-            adapter = SideMenuAdapter(items, this@MyQrCodeReaderMainActivity)
-        }
-
-        // Enable ActionBar app icon to behave as action to toggle nav drawer.
-        // actionBar = getActionbar
         actionBar.run {
-            setDisplayHomeAsUpEnabled(true)
-            setHomeButtonEnabled(true)
+            actionBar?.setDisplayHomeAsUpEnabled(true)
+            actionBar?.setHomeButtonEnabled(true)
         }
-
-        _drawerToggle = object : ActionBarDrawerToggle(
-                this,
-                _drawerLayout,
-                R.string.drawer_open,
-                R.string.drawer_close) {
-            override fun onDrawerClosed(drawerView: View?) {
-                actionBar.title = "close";
-                invalidateOptionsMenu() // Creates call to onPrepareOptionsMenu().
-            }
-
-            override fun onDrawerOpened(drawerView: View?) {
-                actionBar.title = "open"
-                invalidateOptionsMenu() // Creates call to onPrepareOptionsMenu().
-            }
-        }
-
-        // Set a custom shadow that overlays the main content when the drawer opens.
+        _drawerToggle = object : ActionBarDrawerToggle(this, _drawerLayout, R.string.drawer_open, R.string.drawer_close) {}
         _drawerLayout.addDrawerListener(_drawerToggle)
 
-        if (savedInstanceState == null) {
-//            selectItem(0)
-        }
-
-
-
-
+        // setup permission
+        this.setupPermission()
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
-        _menuToggle?.syncState();
+        // Sync the toggle state after has occurred.
+        _drawerToggle.syncState()
     }
 
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        getMenuInflater().inflate(R.menu.menu_main, menu)
-        return true;
-    }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        if (_drawerToggle.onOptionsItemSelected(item)) {
+            // home is selected
+            return true
+        }
+        when (item?.itemId) {
+            SideMenuFragment.MenuItemType.Recent.rawValue -> {
+                Toast.makeText(this, "Recent", Toast.LENGTH_SHORT).show()
+                _drawerLayout.closeDrawer(Gravity.START)
+                return true
+            }
+            SideMenuFragment.MenuItemType.Favorite.rawValue -> {
+                Toast.makeText(this, "Favorite", Toast.LENGTH_SHORT).show()
+                _drawerLayout.closeDrawer(Gravity.START)
+                return true
+            }
+            SideMenuFragment.MenuItemType.License.rawValue -> {
+                Toast.makeText(this, "License", Toast.LENGTH_SHORT).show()
+                _drawerLayout.closeDrawer(Gravity.START)
+                return true
+            }
+        }
+
         return super.onOptionsItemSelected(item)
     }
 
-
-    /* The click listener for RecyclerView in the navigation drawer. */
-    override fun onClick(view: View, position: Int) {
-//        selectItem(position)
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        // Pass any configuration change to the drawer toggle.
+        _drawerToggle.onConfigurationChanged(newConfig)
     }
 
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>?, grantResults: IntArray?) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+    }
 
 
     //==============================================================================================
     // Private method
     //==============================================================================================
+    private fun setupPermission() {
+        val result = this.checkPermission(Manifest.permission.CAMERA, android.os.Process.myPid(), Process.myUid())
+        if (result != PackageManager.PERMISSION_GRANTED) {
+            var shouldShowRequestPermission = false
+            if (23 <= Build.VERSION.SDK_INT) {
+                shouldShowRequestPermission = this.shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)
+            }
+            if (shouldShowRequestPermission) {
+                Toast.makeText(this, "show request permission", Toast.LENGTH_SHORT).show()
 
-//    override fun writeToParcel(parcel: Parcel, flags: Int) {
-//
-//    }
-//
-//    override fun describeContents(): Int {
-//        return 0
-//    }
-//
-//    companion object CREATOR : Parcelable.Creator<MyQrCodeReaderMainActivity> {
-//        override fun createFromParcel(parcel: Parcel): MyQrCodeReaderMainActivity {
-//            return MyQrCodeReaderMainActivity(parcel)
-//        }
-//
-//        override fun newArray(size: Int): Array<MyQrCodeReaderMainActivity?> {
-//            return arrayOfNulls(size)
-//        }
-//    }
+                // permission denied and user check never show dialog again.
+            } else {
+                // request permission
+
+            }
+        } else {
+            Toast.makeText(this, "permission granted", Toast.LENGTH_SHORT).show()
+        }
+    }
 
 }

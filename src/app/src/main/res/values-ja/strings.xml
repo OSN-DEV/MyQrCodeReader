@@ -1,0 +1,7 @@
+<resources>
+    <!-- side menu -->
+    <string name="side_menu_recent">最近の読取アイテム</string>
+    <string name="side_menu_favorite">お気に入り</string>
+    <string name="side_menu_licence">ライセンス</string>
+
+</resources>

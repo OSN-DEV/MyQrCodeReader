@@ -6,7 +6,7 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:openDrawer="start" >
+    tools:openDrawer="start">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
@@ -17,21 +17,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.2" />
+            app:layout_constraintGuide_percent="0.2"/>
 
         <android.support.constraint.Guideline
             android:id="@+id/guideline_preview_right"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.8" />
+            app:layout_constraintGuide_percent="0.8"/>
 
         <android.support.constraint.Guideline
             android:id="@+id/guideline_preview_top"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.2" />
+            app:layout_constraintGuide_percent="0.2"/>
 
         <tenpokei.java_conf.gr.jp.myqrcodereader.barcode.CameraSourcePreview
             android:id="@+id/preview"
@@ -53,7 +53,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"/>
         </tenpokei.java_conf.gr.jp.myqrcodereader.barcode.CameraSourcePreview>
 
         <android.support.constraint.Guideline
@@ -61,15 +61,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.9" />
+            app:layout_constraintGuide_percent="0.9"/>
 
         <TextView
             android:id="@+id/result"
-            style="@style/TextBase"
+            style="@style/TextViewBase"
             android:gravity="center"
             android:maxLines="3"
             app:layout_constraintBottom_toBottomOf="@id/guideline_result"
-            tools:text="http://www.google.co.jp" />
+            tools:text="http://www.google.co.jp"/>
 
 
         <!--<View-->
@@ -121,15 +121,11 @@
 
     </android.support.constraint.ConstraintLayout>
 
-    <android.support.v7.widget.RecyclerView
+    <LinearLayout
         android:id="@+id/side_menu"
-        android:scrollbars="vertical"
-        android:layout_width="@dimen/nav_menu_width"
+        android:layout_width="@dimen/side_menu_width"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:choiceMode="singleChoice"
-        android:divider="@null"
-        app:layoutManager="LinearLayoutManager"
-        />
+        android:orientation="vertical"/>
 
 </android.support.v4.widget.DrawerLayout>
