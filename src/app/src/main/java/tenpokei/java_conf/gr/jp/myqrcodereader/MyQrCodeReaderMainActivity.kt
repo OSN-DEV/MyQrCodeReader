@@ -2,11 +2,11 @@ package tenpokei.java_conf.gr.jp.myqrcodereader
 
 import android.Manifest
 import android.app.Activity
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
-import android.os.Build
+import android.net.Uri
 import android.os.Bundle
-import android.os.Process
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v4.widget.DrawerLayout
@@ -15,7 +15,9 @@ import android.view.Gravity
 import android.view.MenuItem
 import android.widget.Toast
 
-class MyQrCodeReaderMainActivity() : Activity() {
+
+class MyQrCodeReaderMainActivity : Activity(), CommonDialogFragment.OnCommonDialogFragmentListener {
+
     // Barcode reader sample(Github)
     // https://github.com/googlesamples/android-vision/tree/master/visionSamples/barcode-reader
 
@@ -31,6 +33,12 @@ class MyQrCodeReaderMainActivity() : Activity() {
     private lateinit var _drawerLayout: DrawerLayout
     private lateinit var _drawerToggle: ActionBarDrawerToggle
 
+    private val _permissionRequestCamera = 1
+
+    private enum class DialogId(val rawValue: Int) {
+        UnavailableCamera(1),
+        PermissionDenied(2)
+    }
 
     //==============================================================================================
     // Activity
@@ -43,7 +51,6 @@ class MyQrCodeReaderMainActivity() : Activity() {
         val sideMenu = SideMenuFragment.newInstance()
         val transaction = fragmentManager.beginTransaction()
         transaction.replace(R.id.side_menu, sideMenu)
-        transaction.addToBackStack(null)
         transaction.commit()
 
         // setup action bar
@@ -58,8 +65,10 @@ class MyQrCodeReaderMainActivity() : Activity() {
         _drawerToggle = object : ActionBarDrawerToggle(this, _drawerLayout, R.string.drawer_open, R.string.drawer_close) {}
         _drawerLayout.addDrawerListener(_drawerToggle)
 
-        // setup permission
-        this.setupPermission()
+        // setup permission(only once)
+        if (null == savedInstanceState) {
+            this.setupPermission()
+        }
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -101,9 +110,43 @@ class MyQrCodeReaderMainActivity() : Activity() {
         _drawerToggle.onConfigurationChanged(newConfig)
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>?, grantResults: IntArray?) {
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>?, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (_permissionRequestCamera == requestCode && grantResults.isNotEmpty()) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // permission granted
+            } else {
+                // show error
+                CommonDialogFragment.show(fragmentManager, DialogId.PermissionDenied.rawValue,
+                        R.string.error_message_permission_denied, CommonDialogFragment.DialogType.Error)
+            }
+        }
+    }
 
+    //==============================================================================================
+    // OnCommonDialogFragmentListener
+    //==============================================================================================
+    override fun onOkButtonClick(dialogId: Int) {
+        if (dialogId == DialogId.PermissionDenied.rawValue) {
+            this.finish()
+        }
+    }
+
+    override fun onYesButtonClick(dialogId: Int) {
+        if (dialogId == DialogId.UnavailableCamera.rawValue) {
+            // show system app setting
+            val intent = Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                    Uri.parse("package:" + packageName))
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            this.startActivity(intent)
+            this.finish()
+        }
+    }
+
+    override fun onNoButtonClick(dialogId: Int) {
+        if (dialogId == DialogId.UnavailableCamera.rawValue) {
+            this.finish()
+        }
     }
 
 
@@ -111,19 +154,14 @@ class MyQrCodeReaderMainActivity() : Activity() {
     // Private method
     //==============================================================================================
     private fun setupPermission() {
-        val result = this.checkPermission(Manifest.permission.CAMERA, android.os.Process.myPid(), Process.myUid())
-        if (result != PackageManager.PERMISSION_GRANTED) {
-            var shouldShowRequestPermission = false
-            if (23 <= Build.VERSION.SDK_INT) {
-                shouldShowRequestPermission = this.shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)
-            }
-            if (shouldShowRequestPermission) {
-                Toast.makeText(this, "show request permission", Toast.LENGTH_SHORT).show()
-
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)) {
                 // permission denied and user check never show dialog again.
+                Toast.makeText(this, "show request permission", Toast.LENGTH_SHORT).show()
+                CommonDialogFragment.show(fragmentManager, DialogId.UnavailableCamera.rawValue,
+                        R.string.error_message_unavailable_camera, CommonDialogFragment.DialogType.Confirm)
             } else {
-                // request permission
-
+                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA), _permissionRequestCamera)
             }
         } else {
             Toast.makeText(this, "permission granted", Toast.LENGTH_SHORT).show()

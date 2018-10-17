@@ -4,4 +4,16 @@
     <string name="side_menu_favorite">お気に入り</string>
     <string name="side_menu_licence">ライセンス</string>
 
+    <!-- dialog -->
+    <string name="dialog_button_ok">OK</string>
+    <string name="dialog_button_cancel">キャンセル</string>
+    <string name="dialog_button_yes">はい</string>
+    <string name="dialog_button_no">いいえ</string>
+
+    <string name="dialog_title_error">エラー</string>
+
+
+    <!-- error message -->
+    <string name="error_message_permission_denied">カメラの使用権限がないためアプリを終了します。</string>
+    <string name="error_message_unavailable_camera">カメラの使用権限がないためアプリを終了します。システムの設定を確認してください。\n\nシステムの設定画面を開きますか？</string>
 </resources>
