@@ -5,28 +5,18 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
-import android.hardware.Camera
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
-import android.util.Log
 import android.view.Gravity
 import android.view.MenuItem
 import android.widget.Toast
-import com.google.android.gms.common.ConnectionResult
-import com.google.android.gms.common.GoogleApiAvailability
-import com.google.android.gms.vision.MultiProcessor
-import com.google.android.gms.vision.barcode.Barcode
-import com.google.android.gms.vision.barcode.BarcodeDetector
-import tenpokei.java_conf.gr.jp.myqrcodereader.barcode.*
-import java.io.IOException
 
 
-class MyQrCodeReaderMainActivity : Activity(), CommonDialogFragment.OnCommonDialogFragmentListener, BarcodeGraphicTracker.BarcodeUpdateListener {
+class MyQrCodeReaderMainActivity : Activity(), CommonDialogFragment.OnCommonDialogFragmentListener, BarcodeCaptureFragment.OnBarcodeDetectedListener {
 
     // Barcode reader sample(Github)
     // https://github.com/googlesamples/android-vision/tree/master/visionSamples/barcode-reader
@@ -45,12 +35,8 @@ class MyQrCodeReaderMainActivity : Activity(), CommonDialogFragment.OnCommonDial
 
     private lateinit var _drawerLayout: DrawerLayout
     private lateinit var _drawerToggle: ActionBarDrawerToggle
-    private var _cameraSource: CameraSource? = null
-    private lateinit var _preview: CameraSourcePreview
-    private lateinit var _overlay: GraphicOverlay<BarcodeGraphic>
 
     private val _permissionRequestCamera = 1
-
     private enum class DialogId(val rawValue: Int) {
         UnavailableCamera(1),
         PermissionDenied(2)
@@ -64,10 +50,11 @@ class MyQrCodeReaderMainActivity : Activity(), CommonDialogFragment.OnCommonDial
         setContentView(R.layout.activity_my_qr_code_reader_main)
 
         // setup side menu
-        val sideMenu = SideMenuFragment.newInstance()
         val transaction = fragmentManager.beginTransaction()
-        transaction.replace(R.id.side_menu, sideMenu)
+        transaction.replace(R.id.side_menu, SideMenuFragment.newInstance())
         transaction.commit()
+
+
 
         // setup action bar
         _drawerLayout = findViewById<DrawerLayout>(R.id.drawer_layout).apply {
@@ -82,8 +69,8 @@ class MyQrCodeReaderMainActivity : Activity(), CommonDialogFragment.OnCommonDial
         _drawerLayout.addDrawerListener(_drawerToggle)
 
         // set up preview
-        _preview = findViewById(R.id.preview)
-        _overlay = findViewById(R.id.graphic_overlay)
+//        _preview = findViewById(R.id.preview)
+//        _overlay = findViewById(R.id.graphic_overlay)
 
         // setup permission(only once)
         if (null == savedInstanceState) {
@@ -134,28 +121,13 @@ class MyQrCodeReaderMainActivity : Activity(), CommonDialogFragment.OnCommonDial
         if (_permissionRequestCamera == requestCode && grantResults.isNotEmpty()) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // permission granted
-                this.setupCameraSource()
+                this.setupCaptureFragment()
             } else {
                 // show error
                 CommonDialogFragment.show(fragmentManager, DialogId.PermissionDenied.rawValue,
                         R.string.error_message_permission_denied, CommonDialogFragment.DialogType.Error)
             }
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        startCameraSource()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        _preview?.stop()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        _preview?.release()
     }
 
 
@@ -186,13 +158,12 @@ class MyQrCodeReaderMainActivity : Activity(), CommonDialogFragment.OnCommonDial
     }
 
 
-    override fun onBarcodeDetected(barcode: Barcode?) {
-//        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-        runOnUiThread(Runnable {
-            Toast.makeText(this, "detect!!!!", Toast.LENGTH_SHORT).show()
-        })
-    }
+    //==============================================================================================
+    // BarcodeCaptureFragment.OnBarcodeDetectedListener
+    //==============================================================================================
+    override fun onBarcodeDetected(value: String?) {
 
+    }
 
 
     //==============================================================================================
@@ -212,73 +183,16 @@ class MyQrCodeReaderMainActivity : Activity(), CommonDialogFragment.OnCommonDial
             }
         } else {
             // permission granted
-            this.setupCameraSource()
+            this.setupCaptureFragment()
         }
     }
 
     /*
-     * set up camera
+     * set up capture fragment
      */
-    private fun setupCameraSource() {
-        // BarcodeDetector : Recognizes barcodes (in a variety of 1D and 2D formats) in a supplied Frame
-        val barcodeDetector = BarcodeDetector.Builder(applicationContext).build()
-        val barcodeFactory = BarcodeTrackerFactory(_overlay, this)
-        barcodeDetector.setProcessor(MultiProcessor.Builder(barcodeFactory).build())
-
-        if (!barcodeDetector.isOperational()) {
-            // 初めてバーコードやface APIなどを利用する場合、GMSは必要なライブラリをダウンロードするらしい。
-            // 通常はアプリ起動時にダウンロードは完了しているはずらしい。もし完了してなければバーコード等の読取りが出来ない。
-            // ※ネットで調べてもOfflineで動く・動かないの意見が別れているっぽい。おそらく端末内にあるかどうか、という話なんだろうなと
-            // → Google Play開発者サービスが最新であれば、おそらく問題なく動く気がする。
-
-            // 以下は端末の空き容量の判定処理。このif文に入るケースは気にしなくても良い気がするのでエラーハンドリングはしない
-//            if (cacheDir.usableSpace * 100 / cacheDir.totalSpace <= 10) { // Alternatively, use cacheDir.freeSpace
-//                // Handle storage low state
-//            } else {
-//                // Handle storage ok state
-//            }
-        }
-
-        val builder = CameraSource.Builder(applicationContext, barcodeDetector).apply {
-            setFacing(CameraSource.CAMERA_FACING_BACK)
-            setRequestedPreviewSize(1600, 1024)
-            setRequestedFps(15.0f)
-            if (Build.VERSION_CODES.ICE_CREAM_SANDWICH <= Build.VERSION.SDK_INT) {
-                setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)
-            }
-        }
-        _cameraSource = builder.build()
+    private fun setupCaptureFragment() {
+        val transaction = fragmentManager.beginTransaction()
+        transaction.replace(R.id.container, BarcodeCaptureFragment.newInstance())
+        transaction.commit()
     }
-
-
-    /*
-     * start tracking
-     */
-    @Throws(SecurityException::class)
-    private fun startCameraSource() {
-        // check that the device has play services available.
-        val code = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(applicationContext)
-        if (code != ConnectionResult.SUCCESS) {
-            val dlg = GoogleApiAvailability.getInstance().getErrorDialog(this, code, 9999)
-            dlg.show()
-        }
-
-        if (_cameraSource != null) {
-            try {
-                _preview.start(_cameraSource, _overlay)
-            } catch (e: IOException) {
-                _cameraSource?.release()
-                _cameraSource = null
-            }
-
-        }
-    }
-
-
-
-
-
-
-
-
 }

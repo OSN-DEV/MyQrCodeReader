@@ -91,6 +91,9 @@ public class CameraSource {
      */
     private static final float ASPECT_RATIO_TOLERANCE = 0.01f;
 
+    // deprecatedの警告回避用
+    public static final String FOCUS_MODE_AUTO = Camera.Parameters.FOCUS_MODE_AUTO;
+
     @StringDef({
         Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE,
         Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO,
@@ -98,7 +101,8 @@ public class CameraSource {
         Camera.Parameters.FOCUS_MODE_EDOF,
         Camera.Parameters.FOCUS_MODE_FIXED,
         Camera.Parameters.FOCUS_MODE_INFINITY,
-        Camera.Parameters.FOCUS_MODE_MACRO
+        Camera.Parameters.FOCUS_MODE_MACRO,
+            FOCUS_MODE_AUTO
     })
     @Retention(RetentionPolicy.SOURCE)
     private @interface FocusMode {}

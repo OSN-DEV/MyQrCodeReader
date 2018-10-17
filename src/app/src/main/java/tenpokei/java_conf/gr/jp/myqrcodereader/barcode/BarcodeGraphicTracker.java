@@ -43,14 +43,14 @@ public class BarcodeGraphicTracker extends Tracker<Barcode> {
     }
 
     BarcodeGraphicTracker(GraphicOverlay<BarcodeGraphic> mOverlay, BarcodeGraphic mGraphic,
-                          Context context) {
+            BarcodeUpdateListener listener) {
         this.mOverlay = mOverlay;
         this.mGraphic = mGraphic;
-        if (context instanceof BarcodeUpdateListener) {
-            this.mBarcodeUpdateListener = (BarcodeUpdateListener) context;
-        } else {
-            throw new RuntimeException("Hosting activity must implement BarcodeUpdateListener");
-        }
+        this.mBarcodeUpdateListener = (BarcodeUpdateListener) listener;
+//        if (context instanceof BarcodeUpdateListener) {
+//        } else {
+//            throw new RuntimeException("Hosting activity must implement BarcodeUpdateListener");
+//        }
     }
 
     /**

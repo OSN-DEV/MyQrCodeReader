@@ -28,7 +28,6 @@ import com.google.android.gms.vision.barcode.Barcode;
 public class BarcodeGraphic extends GraphicOverlay.Graphic {
 
     private int mId;
-
     private static final int COLOR_CHOICES[] = {
             Color.BLUE,
             Color.CYAN,
