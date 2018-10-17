@@ -17,14 +17,14 @@
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:orientation="vertical"
-      app:layout_constraintGuide_percent="0.2"/>
+      app:layout_constraintGuide_percent="0"/>
 
     <android.support.constraint.Guideline
       android:id="@+id/guideline_preview_right"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:orientation="vertical"
-      app:layout_constraintGuide_percent="0.8"/>
+      app:layout_constraintGuide_percent="1.0"/>
 
     <android.support.constraint.Guideline
       android:id="@+id/guideline_preview_top"
@@ -38,7 +38,6 @@
       android:layout_width="0dp"
       android:layout_height="0dp"
       android:layout_marginTop="30dp"
-      android:background="#FF0000"
       app:layout_constraintDimensionRatio="h,3:4"
       app:layout_constraintEnd_toStartOf="@+id/guideline_preview_right"
       app:layout_constraintStart_toStartOf="@+id/guideline_preview_left"
@@ -46,10 +45,9 @@
       app:layout_constraintTop_toTopOf="parent">
 
       <tenpokei.java_conf.gr.jp.myqrcodereader.barcode.GraphicOverlay
-        android:id="@+id/graphicOverlay"
+        android:id="@+id/graphic_overlay"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="#00FF00"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -63,13 +61,13 @@
       android:orientation="horizontal"
       app:layout_constraintGuide_percent="0.9"/>
 
-    <TextView
-      android:id="@+id/result"
-      style="@style/TextViewBase"
-      android:gravity="center"
-      android:maxLines="3"
-      app:layout_constraintBottom_toBottomOf="@id/guideline_result"
-      tools:text="http://www.google.co.jp"/>
+    <!--<TextView-->
+      <!--android:id="@+id/result"-->
+      <!--style="@style/TextViewBase"-->
+      <!--android:gravity="center"-->
+      <!--android:maxLines="3"-->
+      <!--app:layout_constraintBottom_toBottomOf="@id/guideline_result"-->
+      <!--tools:text="http://www.google.co.jp"/>-->
 
 
     <!--<View-->
