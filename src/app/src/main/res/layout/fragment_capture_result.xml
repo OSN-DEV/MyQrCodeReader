@@ -1,27 +1,68 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-  xmlns:tools="http://schemas.android.com/tools"
-  android:layout_width="match_parent"
-  android:layout_height="match_parent"
-  tools:context="tenpokei.java_conf.gr.jp.myqrcodereader.CaptureResultFragment">
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/side_menu_background">
 
 
-  <TextView
-    android:id="@+id/site_name"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"/>
+    <android.support.constraint.Guideline
+        android:id="@+id/guide_top"
+        style="@style/HorizontalGuideLineBase"
+        app:layout_constraintGuide_percent="0.05" />
 
-  <TextView
-    android:id="@+id/display_value"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"/>
+    <android.support.constraint.Guideline
+        android:id="@+id/guide_bottom"
+        style="@style/HorizontalGuideLineBase"
+        app:layout_constraintGuide_percent="0.95" />
 
-  <TextView
-    android:id="@+id/launch"
-    style="@style/TextButton"
-    android:layout_width="0dp"
-    android:layout_height="wrap_content"
-    android:layout_marginBottom="20dp"
-    android:text="@string/side_menu_favorite"
-/>
+    <android.support.constraint.Guideline
+        android:id="@+id/guide_start"
+        style="@style/VerticalGuideLineBase"
+        app:layout_constraintGuide_percent="0.05" />
 
-</FrameLayout>
+    <android.support.constraint.Guideline
+        android:id="@+id/guide_end"
+        style="@style/VerticalGuideLineBase"
+        app:layout_constraintGuide_percent="0.95" />
+
+    <ImageView
+        android:id = "@+id/favicon"
+        android:background="#AAAAAA"
+        app:layout_constraintStart_toStartOf="@+id/guide_start"
+        app:layout_constraintTop_toTopOf="@+id/guide_top"
+        android:layout_width="50dp"
+        android:layout_height="50dp" />
+
+    <TextView
+        android:id="@+id/site_name"
+        style="@style/TextViewBase"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:textSize="@dimen/font_larger"
+        android:gravity="center_vertical"
+        app:layout_constraintStart_toEndOf="@+id/favicon"
+        app:layout_constraintTop_toTopOf="@+id/guide_top"
+        tools:text="Google" />
+
+    <TextView
+        android:id="@+id/display_value"
+        style="@style/TextViewBase"
+        app:layout_constraintStart_toStartOf="@+id/guide_start"
+        app:layout_constraintTop_toBottomOf="@+id/favicon"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="20dp"
+        tools:text="http://www.google.co.jp"/>
+
+    <TextView
+        android:id="@+id/launch"
+        style="@style/TextButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        app:layout_constraintBottom_toBottomOf="@+id/guide_bottom"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:text="@string/caption_launch" />
+
+</android.support.constraint.ConstraintLayout>

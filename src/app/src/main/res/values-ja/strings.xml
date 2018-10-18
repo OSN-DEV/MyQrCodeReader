@@ -9,9 +9,10 @@
     <string name="dialog_button_cancel">キャンセル</string>
     <string name="dialog_button_yes">はい</string>
     <string name="dialog_button_no">いいえ</string>
-
     <string name="dialog_title_error">エラー</string>
 
+    <!-- caption -->
+    <string name="caption_launch">launch</string>
 
     <!-- error message -->
     <string name="error_message_permission_denied">カメラの使用権限がないためアプリを終了します。</string>
