@@ -41,6 +41,7 @@ class BarcodeCaptureFragment : Fragment(), BarcodeGraphicTracker.BarcodeUpdateLi
     private var _cameraSource: CameraSource? = null
     private lateinit var _preview: CameraSourcePreview
     private lateinit var _overlay: GraphicOverlay<BarcodeGraphic>
+    private var _detected: Boolean = false
 
 
     interface OnBarcodeDetectedListener {
@@ -99,10 +100,14 @@ class BarcodeCaptureFragment : Fragment(), BarcodeGraphicTracker.BarcodeUpdateLi
     // BarcodeGraphicTracker.BarcodeUpdateListener
     //==============================================================================================
     override fun onBarcodeDetected(barcode: Barcode?) {
-        _preview.stop()
-        activity.runOnUiThread( {
-            _barcodeDetectedListener?.onBarcodeDetected(barcode?.displayValue)
-        })
+        // この時点で _preview を破棄(release or stop)すると次回の起動時にstartCameraSourceが応答なしになるので
+        // 複数回イベントを送信しないよう、フラグで管理する
+        if (!_detected) {
+            activity.runOnUiThread({
+                _barcodeDetectedListener?.onBarcodeDetected(barcode?.displayValue)
+            })
+        }
+        _detected = true
     }
 
 

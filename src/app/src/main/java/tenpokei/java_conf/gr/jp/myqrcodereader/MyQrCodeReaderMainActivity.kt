@@ -37,6 +37,7 @@ class MyQrCodeReaderMainActivity : Activity(), CommonDialogFragment.OnCommonDial
     private lateinit var _drawerToggle: ActionBarDrawerToggle
 
     private val _permissionRequestCamera = 1
+
     private enum class DialogId(val rawValue: Int) {
         UnavailableCamera(1),
         PermissionDenied(2)
@@ -52,9 +53,8 @@ class MyQrCodeReaderMainActivity : Activity(), CommonDialogFragment.OnCommonDial
         // setup side menu
         val transaction = fragmentManager.beginTransaction()
         transaction.replace(R.id.side_menu, SideMenuFragment.newInstance())
+        transaction.replace(R.id.container, CaptureResultFragment.newInstance(), CaptureResultFragment.TAG)
         transaction.commit()
-
-
 
         // setup action bar
         _drawerLayout = findViewById<DrawerLayout>(R.id.drawer_layout).apply {
@@ -67,10 +67,6 @@ class MyQrCodeReaderMainActivity : Activity(), CommonDialogFragment.OnCommonDial
         }
         _drawerToggle = object : ActionBarDrawerToggle(this, _drawerLayout, R.string.drawer_open, R.string.drawer_close) {}
         _drawerLayout.addDrawerListener(_drawerToggle)
-
-        // set up preview
-//        _preview = findViewById(R.id.preview)
-//        _overlay = findViewById(R.id.graphic_overlay)
 
         // setup permission(only once)
         if (null == savedInstanceState) {
@@ -161,8 +157,18 @@ class MyQrCodeReaderMainActivity : Activity(), CommonDialogFragment.OnCommonDial
     //==============================================================================================
     // BarcodeCaptureFragment.OnBarcodeDetectedListener
     //==============================================================================================
-    override fun onBarcodeDetected(value: String?) {
-
+    override fun onBarcodeDetected(displayValue: String?) {
+        fragmentManager.popBackStack()
+        if (null == displayValue) {
+            Toast.makeText(this, R.string.error_capture, Toast.LENGTH_SHORT).show()
+        } else {
+            if (fragmentManager.findFragmentByTag(CaptureResultFragment.TAG) != null &&
+                    fragmentManager.findFragmentByTag(CaptureResultFragment.TAG) is CaptureResultFragment) {
+                (fragmentManager.findFragmentByTag(CaptureResultFragment.TAG) as CaptureResultFragment).showResult(displayValue)
+            } else {
+                Toast.makeText(this, R.string.error_capture, Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
 
@@ -193,6 +199,7 @@ class MyQrCodeReaderMainActivity : Activity(), CommonDialogFragment.OnCommonDial
     private fun setupCaptureFragment() {
         val transaction = fragmentManager.beginTransaction()
         transaction.replace(R.id.container, BarcodeCaptureFragment.newInstance())
+        transaction.addToBackStack(null)
         transaction.commit()
     }
 }

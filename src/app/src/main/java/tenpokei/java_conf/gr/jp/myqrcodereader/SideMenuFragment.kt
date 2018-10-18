@@ -33,9 +33,9 @@ class SideMenuFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         val view = inflater.inflate(R.layout.fragment_side_menu, container, false)
-        view.findViewById<TextView>(R.id.side_menu_recent).setOnClickListener { button -> onMenuItemClicked(MenuItemType.Recent) }
-        view.findViewById<TextView>(R.id.side_menu_favorite).setOnClickListener { button -> onMenuItemClicked(MenuItemType.Favorite) }
-        view.findViewById<TextView>(R.id.side_menu_license).setOnClickListener { button -> onMenuItemClicked(MenuItemType.License) }
+        view.findViewById<TextView>(R.id.side_menu_recent).setOnClickListener { onMenuItemClicked(MenuItemType.Recent) }
+        view.findViewById<TextView>(R.id.side_menu_favorite).setOnClickListener { onMenuItemClicked(MenuItemType.Favorite) }
+        view.findViewById<TextView>(R.id.side_menu_license).setOnClickListener { onMenuItemClicked(MenuItemType.License) }
         view.findViewById<TextView>(R.id.app_version).text = BuildConfig.VERSION_NAME
         return view
     }
