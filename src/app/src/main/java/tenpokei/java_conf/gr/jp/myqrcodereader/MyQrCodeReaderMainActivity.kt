@@ -1,7 +1,6 @@
 package tenpokei.java_conf.gr.jp.myqrcodereader
 
 import android.Manifest
-import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
@@ -11,12 +10,13 @@ import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
+import android.support.v7.app.AppCompatActivity
 import android.view.Gravity
 import android.view.MenuItem
 import android.widget.Toast
 
 
-class MyQrCodeReaderMainActivity : Activity(), CommonDialogFragment.OnCommonDialogFragmentListener, BarcodeCaptureFragment.OnBarcodeDetectedListener {
+class MyQrCodeReaderMainActivity : AppCompatActivity(), CommonDialogFragment.OnCommonDialogFragmentListener, BarcodeCaptureFragment.OnBarcodeDetectedListener {
 
     // Barcode reader sample(Github)
     // https://github.com/googlesamples/android-vision/tree/master/visionSamples/barcode-reader
@@ -51,7 +51,7 @@ class MyQrCodeReaderMainActivity : Activity(), CommonDialogFragment.OnCommonDial
         setContentView(R.layout.activity_my_qr_code_reader_main)
 
         // setup side menu
-        val transaction = fragmentManager.beginTransaction()
+        val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.side_menu, SideMenuFragment.newInstance())
         transaction.replace(R.id.container, CaptureResultFragment.newInstance(), CaptureResultFragment.TAG)
         transaction.commit()
@@ -112,7 +112,7 @@ class MyQrCodeReaderMainActivity : Activity(), CommonDialogFragment.OnCommonDial
         _drawerToggle.onConfigurationChanged(newConfig)
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>?, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (_permissionRequestCamera == requestCode && grantResults.isNotEmpty()) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -120,7 +120,7 @@ class MyQrCodeReaderMainActivity : Activity(), CommonDialogFragment.OnCommonDial
                 this.setupCaptureFragment()
             } else {
                 // show error
-                CommonDialogFragment.show(fragmentManager, DialogId.PermissionDenied.rawValue,
+                CommonDialogFragment.show(supportFragmentManager, DialogId.PermissionDenied.rawValue,
                         R.string.error_message_permission_denied, CommonDialogFragment.DialogType.Error)
             }
         }
@@ -158,13 +158,13 @@ class MyQrCodeReaderMainActivity : Activity(), CommonDialogFragment.OnCommonDial
     // BarcodeCaptureFragment.OnBarcodeDetectedListener
     //==============================================================================================
     override fun onBarcodeDetected(displayValue: String?) {
-        fragmentManager.popBackStack()
+        supportFragmentManager.popBackStack()
         if (null == displayValue) {
             Toast.makeText(this, R.string.error_capture, Toast.LENGTH_SHORT).show()
         } else {
-            if (fragmentManager.findFragmentByTag(CaptureResultFragment.TAG) != null &&
-                    fragmentManager.findFragmentByTag(CaptureResultFragment.TAG) is CaptureResultFragment) {
-                (fragmentManager.findFragmentByTag(CaptureResultFragment.TAG) as CaptureResultFragment).showResult(displayValue)
+            if (supportFragmentManager.findFragmentByTag(CaptureResultFragment.TAG) != null &&
+                    supportFragmentManager.findFragmentByTag(CaptureResultFragment.TAG) is CaptureResultFragment) {
+                (supportFragmentManager.findFragmentByTag(CaptureResultFragment.TAG) as CaptureResultFragment).showResult(displayValue)
             } else {
                 Toast.makeText(this, R.string.error_capture, Toast.LENGTH_SHORT).show()
             }
@@ -182,7 +182,7 @@ class MyQrCodeReaderMainActivity : Activity(), CommonDialogFragment.OnCommonDial
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)) {
                 // permission denied and user check never show dialog again.
-                CommonDialogFragment.show(fragmentManager, DialogId.UnavailableCamera.rawValue,
+                CommonDialogFragment.show(supportFragmentManager, DialogId.UnavailableCamera.rawValue,
                         R.string.error_message_unavailable_camera, CommonDialogFragment.DialogType.Confirm)
             } else {
                 ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA), _permissionRequestCamera)
@@ -197,7 +197,7 @@ class MyQrCodeReaderMainActivity : Activity(), CommonDialogFragment.OnCommonDial
      * set up capture fragment
      */
     private fun setupCaptureFragment() {
-        val transaction = fragmentManager.beginTransaction()
+        val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.container, BarcodeCaptureFragment.newInstance())
         transaction.addToBackStack(null)
         transaction.commit()

@@ -1,7 +1,7 @@
 package tenpokei.java_conf.gr.jp.myqrcodereader
 
-import android.app.Fragment
 import android.os.Bundle
+import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,10 +26,6 @@ class SideMenuFragment : Fragment() {
     //==============================================================================================
     // Fragment
     //==============================================================================================
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         val view = inflater.inflate(R.layout.fragment_side_menu, container, false)
@@ -58,6 +54,6 @@ class SideMenuFragment : Fragment() {
     private fun onMenuItemClicked(type: MenuItemType) {
         val menu = PopupMenu(activity, null).menu
         val item = menu.add(0, type.rawValue, 0, "")
-        activity.onOptionsItemSelected(item)
+        activity?.onOptionsItemSelected(item)
     }
 }

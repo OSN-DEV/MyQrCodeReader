@@ -1,9 +1,9 @@
 package tenpokei.java_conf.gr.jp.myqrcodereader
 
-import android.app.Fragment
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
+import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -50,13 +50,10 @@ class BarcodeCaptureFragment : Fragment(), BarcodeGraphicTracker.BarcodeUpdateLi
 
     private var _barcodeDetectedListener: OnBarcodeDetectedListener? = null
 
-    //==============================================================================================
-    // Fragment
-    //==============================================================================================
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
-        val parent = inflater!!.inflate(R.layout.fragment_barcode_capture, container, false)
+        val parent = inflater.inflate(R.layout.fragment_barcode_capture, container, false)
 
         // set up preview
         _preview = parent.findViewById(R.id.preview)
@@ -103,7 +100,7 @@ class BarcodeCaptureFragment : Fragment(), BarcodeGraphicTracker.BarcodeUpdateLi
         // この時点で _preview を破棄(release or stop)すると次回の起動時にstartCameraSourceが応答なしになるので
         // 複数回イベントを送信しないよう、フラグで管理する
         if (!_detected) {
-            activity.runOnUiThread({
+            activity?.runOnUiThread({
                 _barcodeDetectedListener?.onBarcodeDetected(barcode?.displayValue)
             })
         }
@@ -119,7 +116,7 @@ class BarcodeCaptureFragment : Fragment(), BarcodeGraphicTracker.BarcodeUpdateLi
      */
     private fun setupCameraSource() {
         // BarcodeDetector : Recognizes barcodes (in a variety of 1D and 2D formats) in a supplied Frame
-        val barcodeDetector = BarcodeDetector.Builder(activity.applicationContext).build()
+        val barcodeDetector = BarcodeDetector.Builder(activity?.applicationContext).build()
         val barcodeFactory = BarcodeTrackerFactory(_overlay, this)
         barcodeDetector.setProcessor(MultiProcessor.Builder(barcodeFactory).build())
 
@@ -137,7 +134,7 @@ class BarcodeCaptureFragment : Fragment(), BarcodeGraphicTracker.BarcodeUpdateLi
 //            }
 //        }
 
-        val builder = CameraSource.Builder(activity.applicationContext, barcodeDetector).apply {
+        val builder = CameraSource.Builder(activity?.applicationContext, barcodeDetector).apply {
             setFacing(CameraSource.CAMERA_FACING_BACK)
             setRequestedPreviewSize(1600, 1024)
             setRequestedFps(15.0f)
@@ -155,7 +152,7 @@ class BarcodeCaptureFragment : Fragment(), BarcodeGraphicTracker.BarcodeUpdateLi
     @Throws(SecurityException::class)
     private fun startCameraSource() {
         // check that the device has play services available.
-        val code = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(activity.applicationContext)
+        val code = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(activity?.applicationContext)
         if (code != ConnectionResult.SUCCESS) {
             val dlg = GoogleApiAvailability.getInstance().getErrorDialog(activity, code, 9999)
             dlg.show()

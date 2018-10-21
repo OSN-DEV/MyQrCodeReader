@@ -1,7 +1,7 @@
 package tenpokei.java_conf.gr.jp.myqrcodereader
 
-import android.app.Fragment
 import android.os.Bundle
+import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,11 +17,11 @@ class CaptureResultFragment : Fragment() {
     //==============================================================================================
     // Fragment
     //==============================================================================================
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        val view = inflater!!.inflate(R.layout.fragment_capture_result, container, false)
-        if (0 < _displayValue.length) {
+        val view = inflater.inflate(R.layout.fragment_capture_result, container, false)
+        if (_displayValue.isNotEmpty()) {
             this.setResult(view)
         }
         return view
@@ -34,7 +34,7 @@ class CaptureResultFragment : Fragment() {
     fun showResult(displayValue: String) {
         _displayValue = displayValue
         if (null != view) {
-            setResult(view)
+            setResult(view!!)
         }
     }
 
