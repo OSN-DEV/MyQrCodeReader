@@ -6,25 +6,37 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.ThreadMode
+import org.greenrobot.eventbus.Subscribe
 
 /**
  * show result of qr code capture
  */
 class CaptureResultFragment : Fragment() {
 
-    private var _displayValue: String = ""
+    private var _value: String = ""
+    private lateinit var _displayValue: TextView
 
     //==============================================================================================
     // Fragment
     //==============================================================================================
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_capture_result, container, false)
-        if (_displayValue.isNotEmpty()) {
-            this.setResult(view)
-        }
+        _displayValue = view.findViewById(R.id.display_value)
+        _displayValue.text = _value
         return view
+    }
+
+    override fun onStart() {
+        super.onStart()
+        EventBus.getDefault().register(this)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        EventBus.getDefault().unregister(this)
     }
 
 
@@ -32,27 +44,26 @@ class CaptureResultFragment : Fragment() {
     // Public Method
     //==============================================================================================
     fun showResult(displayValue: String) {
-        _displayValue = displayValue
-        if (null != view) {
-            setResult(view!!)
-        }
+        _value = displayValue
+        _displayValue.text = _value
     }
 
 
     //==============================================================================================
-    // Private method
+    // Event Bus
     //==============================================================================================
-    fun setResult(view: View) {
-        view.findViewById<TextView>(R.id.display_value).setText(_displayValue)
+    @SuppressWarnings("unused")
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onMessageEvent(event: BarcodeDetectEvent) {
+        _displayValue.text = event.displayValue
     }
-
 
 
     //==============================================================================================
     // Static
     //==============================================================================================
     companion object {
-        public val TAG = "CaptureResultFragment"
+        const val TAG = "CaptureResultFragment"
 
         fun newInstance(): Fragment {
             val fragment = CaptureResultFragment()

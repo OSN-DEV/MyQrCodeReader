@@ -14,6 +14,7 @@ import android.support.v7.app.AppCompatActivity
 import android.view.Gravity
 import android.view.MenuItem
 import android.widget.Toast
+import org.greenrobot.eventbus.EventBus
 
 
 class MyQrCodeReaderMainActivity : AppCompatActivity(), CommonDialogFragment.OnCommonDialogFragmentListener, BarcodeCaptureFragment.OnBarcodeDetectedListener {
@@ -162,12 +163,14 @@ class MyQrCodeReaderMainActivity : AppCompatActivity(), CommonDialogFragment.OnC
         if (null == displayValue) {
             Toast.makeText(this, R.string.error_capture, Toast.LENGTH_SHORT).show()
         } else {
-            if (supportFragmentManager.findFragmentByTag(CaptureResultFragment.TAG) != null &&
-                    supportFragmentManager.findFragmentByTag(CaptureResultFragment.TAG) is CaptureResultFragment) {
-                (supportFragmentManager.findFragmentByTag(CaptureResultFragment.TAG) as CaptureResultFragment).showResult(displayValue)
-            } else {
-                Toast.makeText(this, R.string.error_capture, Toast.LENGTH_SHORT).show()
-            }
+            EventBus.getDefault().post(BarcodeDetectEvent(displayValue))
+//
+//            if (supportFragmentManager.findFragmentByTag(CaptureResultFragment.TAG) != null &&
+//                    supportFragmentManager.findFragmentByTag(CaptureResultFragment.TAG) is CaptureResultFragment) {
+//                (supportFragmentManager.findFragmentByTag(CaptureResultFragment.TAG) as CaptureResultFragment).showResult(displayValue)
+//            } else {
+//                Toast.makeText(this, R.string.error_capture, Toast.LENGTH_SHORT).show()
+//            }
         }
     }
 
