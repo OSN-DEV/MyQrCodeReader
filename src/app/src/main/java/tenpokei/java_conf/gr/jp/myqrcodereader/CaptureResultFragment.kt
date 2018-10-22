@@ -53,7 +53,7 @@ class CaptureResultFragment : Fragment() {
     // Event Bus
     //==============================================================================================
     @SuppressWarnings("unused")
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     fun onMessageEvent(event: BarcodeDetectEvent) {
         _displayValue.text = event.displayValue
     }

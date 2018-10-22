@@ -163,7 +163,7 @@ class MyQrCodeReaderMainActivity : AppCompatActivity(), CommonDialogFragment.OnC
         if (null == displayValue) {
             Toast.makeText(this, R.string.error_capture, Toast.LENGTH_SHORT).show()
         } else {
-            EventBus.getDefault().post(BarcodeDetectEvent(displayValue))
+            EventBus.getDefault().postSticky(BarcodeDetectEvent(displayValue))
 //
 //            if (supportFragmentManager.findFragmentByTag(CaptureResultFragment.TAG) != null &&
 //                    supportFragmentManager.findFragmentByTag(CaptureResultFragment.TAG) is CaptureResultFragment) {
