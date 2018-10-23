@@ -18,6 +18,7 @@
 
     <!-- caption -->
     <string name="caption_launch">launch</string>
+    <string name="caption_read_barcode">read barcode</string>
 
     <!-- error message -->
     <string name="error_message_permission_denied">App exits because "use camera" permission is not granted.</string>

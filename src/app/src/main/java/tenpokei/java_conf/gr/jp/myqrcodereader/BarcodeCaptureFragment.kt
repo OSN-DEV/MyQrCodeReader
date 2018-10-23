@@ -45,7 +45,7 @@ class BarcodeCaptureFragment : Fragment(), BarcodeGraphicTracker.BarcodeUpdateLi
 
 
     interface OnBarcodeDetectedListener {
-        fun onBarcodeDetected(value: String?)
+        fun onBarcodeDetected(displayValue: String?)
     }
 
     private var _barcodeDetectedListener: OnBarcodeDetectedListener? = null

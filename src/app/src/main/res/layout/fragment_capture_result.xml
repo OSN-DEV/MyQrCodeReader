@@ -27,7 +27,7 @@
         app:layout_constraintGuide_percent="0.95" />
 
     <ImageView
-        android:id = "@+id/favicon"
+        android:id = "@+id/site_icon"
         android:background="#AAAAAA"
         app:layout_constraintStart_toStartOf="@+id/guide_start"
         app:layout_constraintTop_toTopOf="@+id/guide_top"
@@ -41,7 +41,7 @@
         android:layout_height="50dp"
         android:textSize="@dimen/font_larger"
         android:gravity="center_vertical"
-        app:layout_constraintStart_toEndOf="@+id/favicon"
+        app:layout_constraintStart_toEndOf="@+id/site_icon"
         app:layout_constraintTop_toTopOf="@+id/guide_top"
         tools:text="Google" />
 
@@ -49,7 +49,7 @@
         android:id="@+id/display_value"
         style="@style/TextViewBase"
         app:layout_constraintStart_toStartOf="@+id/guide_start"
-        app:layout_constraintTop_toBottomOf="@+id/favicon"
+        app:layout_constraintTop_toBottomOf="@+id/site_icon"
         android:layout_marginTop="10dp"
         android:layout_marginStart="20dp"
         tools:text="http://www.google.co.jp"/>
@@ -60,9 +60,20 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
-        app:layout_constraintBottom_toBottomOf="@+id/guide_bottom"
+        app:layout_constraintBottom_toTopOf="@+id/read_barcode"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         android:text="@string/caption_launch" />
+
+    <TextView
+      android:id="@+id/read_barcode"
+      style="@style/TextButton"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_marginBottom="20dp"
+      app:layout_constraintBottom_toBottomOf="@+id/guide_bottom"
+      app:layout_constraintLeft_toLeftOf="parent"
+      app:layout_constraintRight_toRightOf="parent"
+      android:text="@string/caption_read_barcode" />
 
 </android.support.constraint.ConstraintLayout>

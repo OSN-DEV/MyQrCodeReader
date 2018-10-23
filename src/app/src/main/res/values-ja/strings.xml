@@ -12,7 +12,8 @@
     <string name="dialog_title_error">エラー</string>
 
     <!-- caption -->
-    <string name="caption_launch">launch</string>
+    <string name="caption_launch">アプリ起動</string>
+    <string name="caption_read_barcode">バーコードの読取り</string>
 
     <!-- error message -->
     <string name="error_message_permission_denied">カメラの使用権限がないためアプリを終了します。</string>
