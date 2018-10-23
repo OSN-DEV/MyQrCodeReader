@@ -15,6 +15,10 @@ import android.view.Gravity
 import android.view.MenuItem
 import android.widget.Toast
 import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
+import tenpokei.java_conf.gr.jp.myqrcodereader.event.BarcodeDetectEvent
+import tenpokei.java_conf.gr.jp.myqrcodereader.event.ScanBarcodeEvent
 
 
 class MyQrCodeReaderMainActivity : AppCompatActivity(), CommonDialogFragment.OnCommonDialogFragmentListener, BarcodeCaptureFragment.OnBarcodeDetectedListener {
@@ -73,6 +77,16 @@ class MyQrCodeReaderMainActivity : AppCompatActivity(), CommonDialogFragment.OnC
         if (null == savedInstanceState) {
             this.setupPermission()
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        EventBus.getDefault().register(this)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        EventBus.getDefault().unregister(this)
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -164,14 +178,17 @@ class MyQrCodeReaderMainActivity : AppCompatActivity(), CommonDialogFragment.OnC
             Toast.makeText(this, R.string.error_capture, Toast.LENGTH_SHORT).show()
         } else {
             EventBus.getDefault().postSticky(BarcodeDetectEvent(displayValue))
-//
-//            if (supportFragmentManager.findFragmentByTag(CaptureResultFragment.TAG) != null &&
-//                    supportFragmentManager.findFragmentByTag(CaptureResultFragment.TAG) is CaptureResultFragment) {
-//                (supportFragmentManager.findFragmentByTag(CaptureResultFragment.TAG) as CaptureResultFragment).showResult(displayValue)
-//            } else {
-//                Toast.makeText(this, R.string.error_capture, Toast.LENGTH_SHORT).show()
-//            }
         }
+    }
+
+
+    //==============================================================================================
+    // EventBus
+    //==============================================================================================
+    @SuppressWarnings("unused")
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    fun onMessageEvent(event: ScanBarcodeEvent) {
+        setupCaptureFragment()
     }
 
 

@@ -16,9 +16,11 @@ import org.greenrobot.eventbus.Subscribe
 import com.github.kittinunf.result.Result
 import tenpokei.java_conf.gr.jp.myqrcodereader.data.AppDatabase
 import android.graphics.BitmapFactory
-import android.graphics.Bitmap
 import android.os.Handler
 import android.os.Looper
+import android.widget.Button
+import tenpokei.java_conf.gr.jp.myqrcodereader.event.BarcodeDetectEvent
+import tenpokei.java_conf.gr.jp.myqrcodereader.event.ScanBarcodeEvent
 import java.util.regex.Pattern
 
 
@@ -40,19 +42,21 @@ class CaptureResultFragment : Fragment() {
     private var _id: Long = -1
     private val LogTag = "MyQuCodeReader"
 
-    private lateinit var _displayValueTextView: TextView
+    private lateinit var _displayValue: TextView
     private lateinit var _siteIcon: ImageView
     private lateinit var _siteName: TextView
 
     //==============================================================================================
     // Fragment
     //==============================================================================================
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_capture_result, container, false)
-        _displayValueTextView = view.findViewById(R.id.display_value)
+
+        _displayValue = view.findViewById(R.id.display_value)
         _siteName = view.findViewById(R.id.site_name)
         _siteIcon = view.findViewById(R.id.site_icon)
+
+        view.findViewById<Button>(R.id.scan_barcode).setOnClickListener { EventBus.getDefault().post(ScanBarcodeEvent()) }
         return view
     }
 
@@ -74,7 +78,6 @@ class CaptureResultFragment : Fragment() {
     }
 
 
-
     //==============================================================================================
     // Event Bus
     //==============================================================================================
@@ -85,7 +88,6 @@ class CaptureResultFragment : Fragment() {
     }
 
 
-
     //==============================================================================================
     // Private Method
     //==============================================================================================
@@ -93,7 +95,7 @@ class CaptureResultFragment : Fragment() {
      * show detected result
      */
     private fun showResult(displayValue: String) {
-        _displayValueTextView.text = displayValue
+        _displayValue.text = displayValue
         _id = _database.createHistory(displayValue)
 
         // get favicon and site namte
