@@ -63,13 +63,11 @@ class MyQrCodeReaderMainActivity : AppCompatActivity(), CommonDialogFragment.OnC
             // Set a simple drawable used for the left or right shadow.
             setDrawerShadow(R.drawable.drawer_shadow, Gravity.START)
         }
-        actionBar.run {
-            actionBar?.setLogo(R.mipmap.ic_launcher)
-            actionBar?.setHomeAsUpIndicator(R.mipmap.ic_launcher)
-            actionBar?.setDisplayHomeAsUpEnabled(true)
-            actionBar?.setHomeButtonEnabled(true)
-            actionBar?.setDisplayUseLogoEnabled(true)
+        supportActionBar.run {
+            supportActionBar?.setDisplayShowHomeEnabled(true)
+            supportActionBar?.setDisplayHomeAsUpEnabled(true)
         }
+
         _drawerToggle = object : ActionBarDrawerToggle(this, _drawerLayout, R.string.drawer_open, R.string.drawer_close) {}
         _drawerLayout.addDrawerListener(_drawerToggle)
         _drawerToggle.syncState()
