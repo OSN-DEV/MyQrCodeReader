@@ -1,79 +1,91 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:background="@color/white">
+
+
+  <android.support.constraint.Guideline
+    android:id="@+id/guide_top"
+    style="@style/HorizontalGuideLineBase"
+    app:layout_constraintGuide_percent="0.05"/>
+
+  <android.support.constraint.Guideline
+    android:id="@+id/guide_bottom"
+    style="@style/HorizontalGuideLineBase"
+    app:layout_constraintGuide_percent="0.95"/>
+
+  <android.support.constraint.Guideline
+    android:id="@+id/guide_start"
+    style="@style/VerticalGuideLineBase"
+    app:layout_constraintGuide_percent="0.05"/>
+
+  <android.support.constraint.Guideline
+    android:id="@+id/guide_end"
+    style="@style/VerticalGuideLineBase"
+    app:layout_constraintGuide_percent="0.95"/>
+
+  <LinearLayout
+    android:id="@+id/web_page_container"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/side_menu_background">
+    android:layout_height="wrap_content"
+    android:layout_marginStart="20dp"
+    android:layout_marginEnd="20dp"
+    android:orientation="horizontal"
+    android:visibility="visible"
+    app:layout_constraintStart_toStartOf="@+id/guide_start"
+    app:layout_constraintTop_toTopOf="@+id/guide_top"
 
-
-    <android.support.constraint.Guideline
-        android:id="@+id/guide_top"
-        style="@style/HorizontalGuideLineBase"
-        app:layout_constraintGuide_percent="0.05" />
-
-    <android.support.constraint.Guideline
-        android:id="@+id/guide_bottom"
-        style="@style/HorizontalGuideLineBase"
-        app:layout_constraintGuide_percent="0.95" />
-
-    <android.support.constraint.Guideline
-        android:id="@+id/guide_start"
-        style="@style/VerticalGuideLineBase"
-        app:layout_constraintGuide_percent="0.05" />
-
-    <android.support.constraint.Guideline
-        android:id="@+id/guide_end"
-        style="@style/VerticalGuideLineBase"
-        app:layout_constraintGuide_percent="0.95" />
-
+    >
     <ImageView
-        android:id = "@+id/site_icon"
-        android:background="#AAAAAA"
-        app:layout_constraintStart_toStartOf="@+id/guide_start"
-        app:layout_constraintTop_toTopOf="@+id/guide_top"
-        android:layout_width="50dp"
-        android:layout_height="50dp" />
+      android:id="@+id/site_icon"
+      android:layout_width="30dp"
+      android:layout_height="30dp"
+      android:layout_gravity="center_vertical"
+      android:visibility="visible"
+      />
 
     <TextView
-        android:id="@+id/site_name"
-        style="@style/TextViewBase"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:textSize="@dimen/font_larger"
-        android:gravity="center_vertical"
-        app:layout_constraintStart_toEndOf="@+id/site_icon"
-        app:layout_constraintTop_toTopOf="@+id/guide_top"
-        tools:text="Google" />
+      android:id="@+id/site_name"
+      style="@style/TextViewBase"
+      android:layout_width="wrap_content"
+      android:layout_height="50dp"
+      android:gravity="center_vertical"
+      android:textSize="@dimen/font_larger"
+      android:visibility="visible"
+      tools:text="Google"/>
+  </LinearLayout>
 
-    <TextView
-        android:id="@+id/display_value"
-        style="@style/TextViewBase"
-        app:layout_constraintStart_toStartOf="@+id/guide_start"
-        app:layout_constraintTop_toBottomOf="@+id/site_icon"
-        android:layout_marginTop="10dp"
-        android:layout_marginStart="20dp"
-        tools:text="http://www.google.co.jp"/>
+  <TextView
+    android:id="@+id/display_value"
+    style="@style/TextViewBase"
+    android:layout_marginTop="10dp"
+    app:layout_constraintStart_toStartOf="@+id/guide_start"
+    app:layout_constraintTop_toBottomOf="@+id/web_page_container"
+    tools:text="http://www.google.co.jp"/>
 
-    <TextView
-        android:id="@+id/launch"
-        style="@style/TextButton"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        app:layout_constraintBottom_toTopOf="@+id/scan_barcode"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:text="@string/caption_launch" />
+  <TextView
+    android:id="@+id/launch"
+    style="@style/TextButton"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="20dp"
+    android:text="@string/caption_launch"
+    android:visibility="gone"
+    app:layout_constraintBottom_toTopOf="@+id/scan_barcode"
+    app:layout_constraintLeft_toLeftOf="parent"
+    app:layout_constraintRight_toRightOf="parent"/>
 
-    <TextView
-      android:id="@+id/scan_barcode"
-      style="@style/TextButton"
-      android:layout_width="0dp"
-      android:layout_height="wrap_content"
-      android:layout_marginBottom="20dp"
-      app:layout_constraintBottom_toBottomOf="@+id/guide_bottom"
-      app:layout_constraintLeft_toLeftOf="parent"
-      app:layout_constraintRight_toRightOf="parent"
-      android:text="@string/caption_read_barcode" />
+  <TextView
+    android:id="@+id/scan_barcode"
+    style="@style/TextButton"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="20dp"
+    android:text="@string/caption_read_barcode"
+    app:layout_constraintBottom_toBottomOf="@+id/guide_bottom"
+    app:layout_constraintLeft_toLeftOf="parent"
+    app:layout_constraintRight_toRightOf="parent"/>
 
 </android.support.constraint.ConstraintLayout>

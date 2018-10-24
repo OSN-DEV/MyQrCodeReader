@@ -1,26 +1,26 @@
-package tenpokei.java_conf.gr.jp.myqrcodereader
+package jp.gr.javaconf.tenpokei.myqrcodereader
 
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.support.v4.app.Fragment
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import com.github.kittinunf.fuel.httpGet
-import org.greenrobot.eventbus.EventBus
-import org.greenrobot.eventbus.ThreadMode
-import org.greenrobot.eventbus.Subscribe
 import com.github.kittinunf.result.Result
-import tenpokei.java_conf.gr.jp.myqrcodereader.data.AppDatabase
-import android.graphics.BitmapFactory
-import android.os.Handler
-import android.os.Looper
-import android.widget.Button
-import tenpokei.java_conf.gr.jp.myqrcodereader.event.BarcodeDetectEvent
-import tenpokei.java_conf.gr.jp.myqrcodereader.event.ScanBarcodeEvent
+import jp.gr.javaconf.tenpokei.myqrcodereader.data.AppDatabase
+import jp.gr.javaconf.tenpokei.myqrcodereader.event.RefreshScanResultEvent
+import jp.gr.javaconf.tenpokei.myqrcodereader.event.ScanBarcodeEvent
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import java.util.regex.Pattern
 
 
@@ -37,10 +37,8 @@ class CaptureResultFragment : Fragment() {
     // How to convert image to byte array and byte array to image in Java
     // http://mrbool.com/how-to-convert-image-to-byte-array-and-byte-array-to-image-in-java/25136
 
-    private val FaviconUrl = "http://www.google.com/s2/favicons?domain="
     private lateinit var _database: AppDatabase
     private var _id: Long = -1
-    private val LogTag = "MyQuCodeReader"
 
     private lateinit var _displayValue: TextView
     private lateinit var _siteIcon: ImageView
@@ -55,8 +53,7 @@ class CaptureResultFragment : Fragment() {
         _displayValue = view.findViewById(R.id.display_value)
         _siteName = view.findViewById(R.id.site_name)
         _siteIcon = view.findViewById(R.id.site_icon)
-
-        view.findViewById<Button>(R.id.scan_barcode).setOnClickListener { EventBus.getDefault().post(ScanBarcodeEvent()) }
+        view.findViewById<TextView>(R.id.scan_barcode).setOnClickListener { EventBus.getDefault().post(ScanBarcodeEvent()) }
         return view
     }
 
@@ -81,9 +78,9 @@ class CaptureResultFragment : Fragment() {
     //==============================================================================================
     // Event Bus
     //==============================================================================================
-    @SuppressWarnings("unused")
+    @Suppress("unused")
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
-    fun onMessageEvent(event: BarcodeDetectEvent) {
+    fun onMessageEvent(event: RefreshScanResultEvent) {
         showResult(event.displayValue)
     }
 
@@ -97,49 +94,53 @@ class CaptureResultFragment : Fragment() {
     private fun showResult(displayValue: String) {
         _displayValue.text = displayValue
         _id = _database.createHistory(displayValue)
+        view?.findViewById<TextView>(R.id.launch)?.visibility = View.VISIBLE
 
         // get favicon and site namte
         try {
             if (displayValue.startsWith("http://") || displayValue.startsWith("https://")) {
-                var uri = Uri.parse(displayValue)
+                view?.findViewById<LinearLayout>(R.id.web_page_container)?.visibility = View.VISIBLE
+                val uri = Uri.parse(displayValue)
 
                 // site name
-                displayValue.httpGet().response { request, response, result ->
+                displayValue.httpGet().response { _, response, result ->
                     when (result) {
                         is Result.Success -> {
-                            var body = String(response.data)
-                            val pattern = Pattern.compile("<title>(?<value>.*)</title>")
-                            val matcher = pattern.matcher(body)
-                            if (matcher.matches()) {
-//                                _siteName.text = matcher.group("value").toString()
-                                _siteName.text = matcher.group(0).toString()
+                            val pattern = Pattern.compile("<title>(.*?)</title>", Pattern.CASE_INSENSITIVE)
+                            val matcher = pattern.matcher(String(response.data))
+                            if (matcher.find()) {
+                                Handler(Looper.getMainLooper()).post({
+                                    // _siteName.text = matcher.group("value").toString() // this method requires minimum SDK API 26
+                                    val siteName = matcher.group(1).toString()
+                                    _database.updateSiteName(_id, siteName)
+                                    _siteName.text = siteName
+                                })
                             }
-
                         }
                         is Result.Failure -> {
-                            Log.d(LogTag, "Fail to get favicon")
+                            Log.d(TAG, "Fail to get favicon")
                         }
                     }
                 }
 
                 // favicon
-                (FaviconUrl + uri.authority).httpGet().response { request, response, result ->
+                (FAVICON_URL + uri.authority).httpGet().response { _, response, result ->
                     when (result) {
                         is Result.Success -> {
                             _database.updateSiteIcon(_id, response.data)
-                            val bmp = BitmapFactory.decodeByteArray(response.data, 0, response.data.size)
-                            Handler(Looper.getMainLooper()).post(Runnable {
+                            Handler(Looper.getMainLooper()).post({
+                                _database.updateSiteIcon(_id, response.data)
                                 _siteIcon.setImageBitmap(BitmapFactory.decodeByteArray(response.data, 0, response.data.size))
                             })
                         }
                         is Result.Failure -> {
-                            Log.d(LogTag, "Fail to get favicon")
+                            Log.d(TAG, "Fail to get favicon")
                         }
                     }
                 }
             }
         } catch (ex: Exception) {
-            Log.e(LogTag, ex.message, ex)
+            Log.e(TAG, ex.message, ex)
         }
     }
 
@@ -149,6 +150,7 @@ class CaptureResultFragment : Fragment() {
     //==============================================================================================
     companion object {
         const val TAG = "CaptureResultFragment"
+        const val FAVICON_URL = "http://www.google.com/s2/favicons?domain="
 
         fun newInstance(): Fragment {
             return CaptureResultFragment()

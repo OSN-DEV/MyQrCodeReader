@@ -1,4 +1,4 @@
-package tenpokei.java_conf.gr.jp.myqrcodereader
+package jp.gr.javaconf.tenpokei.myqrcodereader
 
 import android.content.Context
 import android.os.Build
@@ -12,7 +12,7 @@ import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.vision.MultiProcessor
 import com.google.android.gms.vision.barcode.Barcode
 import com.google.android.gms.vision.barcode.BarcodeDetector
-import tenpokei.java_conf.gr.jp.myqrcodereader.barcode.*
+import jp.gr.javaconf.tenpokei.myqrcodereader.barcode.*
 import java.io.IOException
 
 /**
@@ -20,17 +20,8 @@ import java.io.IOException
  */
 class BarcodeCaptureFragment : Fragment(), BarcodeGraphicTracker.BarcodeUpdateListener {
 
-    // Barcode reader sample(Github)
+    // Barcode reader sample(GitHub)
     // https://github.com/googlesamples/android-vision/tree/master/visionSamples/barcode-reader
-
-    // アイコンのサイズ
-    // https://backport.net/blog/2018/02/17/adaptive_icon/
-
-    // Adaptive Iconの作成
-    // https://akira-watson.com/android/adaptive-icons.html
-
-    // 少し親切なランタイムパーミッション対応
-    // https://qiita.com/caad1229/items/35bab757217b204711df
 
     // AndroidでQRコードをリーダーを作る（超シンプル版）
     // https://dev.eyewhale.com/archives/1372

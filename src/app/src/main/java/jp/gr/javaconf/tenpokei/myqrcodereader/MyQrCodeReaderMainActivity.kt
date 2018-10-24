@@ -1,4 +1,4 @@
-package tenpokei.java_conf.gr.jp.myqrcodereader
+package jp.gr.javaconf.tenpokei.myqrcodereader
 
 import android.Manifest
 import android.content.Intent
@@ -14,17 +14,13 @@ import android.support.v7.app.AppCompatActivity
 import android.view.Gravity
 import android.view.MenuItem
 import android.widget.Toast
+import jp.gr.javaconf.tenpokei.myqrcodereader.event.RefreshScanResultEvent
+import jp.gr.javaconf.tenpokei.myqrcodereader.event.ScanBarcodeEvent
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-import tenpokei.java_conf.gr.jp.myqrcodereader.event.BarcodeDetectEvent
-import tenpokei.java_conf.gr.jp.myqrcodereader.event.ScanBarcodeEvent
-
 
 class MyQrCodeReaderMainActivity : AppCompatActivity(), CommonDialogFragment.OnCommonDialogFragmentListener, BarcodeCaptureFragment.OnBarcodeDetectedListener {
-
-    // Barcode reader sample(Github)
-    // https://github.com/googlesamples/android-vision/tree/master/visionSamples/barcode-reader
 
     // アイコンのサイズ
     // https://backport.net/blog/2018/02/17/adaptive_icon/
@@ -177,7 +173,7 @@ class MyQrCodeReaderMainActivity : AppCompatActivity(), CommonDialogFragment.OnC
         if (null == displayValue) {
             Toast.makeText(this, R.string.error_capture, Toast.LENGTH_SHORT).show()
         } else {
-            EventBus.getDefault().postSticky(BarcodeDetectEvent(displayValue))
+            EventBus.getDefault().postSticky(RefreshScanResultEvent(displayValue))
         }
     }
 
@@ -187,7 +183,7 @@ class MyQrCodeReaderMainActivity : AppCompatActivity(), CommonDialogFragment.OnC
     //==============================================================================================
     @SuppressWarnings("unused")
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
-    fun onMessageEvent(event: ScanBarcodeEvent) {
+    fun onMessageEvent(eventRefresh: ScanBarcodeEvent) {
         setupCaptureFragment()
     }
 

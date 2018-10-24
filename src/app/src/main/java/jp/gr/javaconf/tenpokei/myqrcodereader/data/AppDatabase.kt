@@ -1,4 +1,4 @@
-package tenpokei.java_conf.gr.jp.myqrcodereader.data
+package jp.gr.javaconf.tenpokei.myqrcodereader.data
 
 import android.content.ContentValues
 import android.content.Context
@@ -43,7 +43,7 @@ class AppDatabase(context: Context) : SQLiteOpenHelper(context, "app_data.db", n
      * @param displayValue display value
      * @return id
      */
-    fun createHistory(displayValue: String) : Long {
+    fun createHistory(displayValue: String): Long {
         var id: Long = -1
         val database = writableDatabase
         try {
@@ -76,16 +76,12 @@ class AppDatabase(context: Context) : SQLiteOpenHelper(context, "app_data.db", n
         return id
     }
 
-    /*
-     *
-     */
-
     /**
      * update site icon
      * @param id id that update
      * @param siteIcon icon data
      */
-    public fun updateSiteIcon(id: Long, siteIcon: ByteArray) {
+    fun updateSiteIcon(id: Long, siteIcon: ByteArray) {
         val database = writableDatabase
         try {
             database.beginTransaction()
@@ -102,4 +98,25 @@ class AppDatabase(context: Context) : SQLiteOpenHelper(context, "app_data.db", n
         }
     }
 
+    /**
+     * update site icon
+     * @param id id that update
+     * @param siteName site name
+     */
+    fun updateSiteName(id: Long, siteName: String) {
+        val database = writableDatabase
+        try {
+            database.beginTransaction()
+
+            val sql = StringBuilder()
+            sql.append("UPDATE read_histories set")
+            sql.append(" site_name=?")
+            sql.append(" where id=?")
+            database.execSQL(sql.toString(), arrayOf(siteName, id))
+
+            database.setTransactionSuccessful()
+        } finally {
+            database.endTransaction()
+        }
+    }
 }

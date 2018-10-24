@@ -1,4 +1,4 @@
-package tenpokei.java_conf.gr.jp.myqrcodereader
+package jp.gr.javaconf.tenpokei.myqrcodereader
 
 import android.app.AlertDialog
 import android.app.Dialog

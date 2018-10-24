@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="tenpokei.java_conf.gr.jp.myqrcodereader">
+  package="jp.gr.javaconf.tenpokei.myqrcodereader">
 
     <uses-feature android:name="android.hardware.camera"/>
 
