@@ -21,7 +21,7 @@ import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
-class MyQrCodeReaderMainActivity : AppCompatActivity(), CommonDialogFragment.OnCommonDialogFragmentListener, BarcodeCaptureFragment.OnBarcodeDetectedListener {
+class MyQrCodeReaderMainActivity : AppCompatActivity(), CommonDialogFragment.OnCommonDialogFragmentListener {
 
     // アイコンのサイズ
     // https://backport.net/blog/2018/02/17/adaptive_icon/
@@ -163,19 +163,6 @@ class MyQrCodeReaderMainActivity : AppCompatActivity(), CommonDialogFragment.OnC
     override fun onNoButtonClick(dialogId: Int) {
         if (dialogId == DialogId.UnavailableCamera.rawValue) {
             this.finish()
-        }
-    }
-
-
-    //==============================================================================================
-    // BarcodeCaptureFragment.OnBarcodeDetectedListener
-    //==============================================================================================
-    override fun onBarcodeDetected(displayValue: String?) {
-        supportFragmentManager.popBackStack()
-        if (null == displayValue) {
-            Toast.makeText(this, R.string.error_message_capture_failed, Toast.LENGTH_SHORT).show()
-        } else {
-            EventBus.getDefault().postSticky(RefreshScanResultEvent(displayValue))
         }
     }
 

@@ -36,13 +36,6 @@ class BarcodeCaptureFragment : Fragment(), BarcodeGraphicTracker.BarcodeUpdateLi
     private lateinit var _overlay: GraphicOverlay<BarcodeGraphic>
     private var _detected: Boolean = false
 
-
-    interface OnBarcodeDetectedListener {
-        fun onBarcodeDetected(displayValue: String?)
-    }
-
-    private var _barcodeDetectedListener: OnBarcodeDetectedListener? = null
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
@@ -72,19 +65,6 @@ class BarcodeCaptureFragment : Fragment(), BarcodeGraphicTracker.BarcodeUpdateLi
         _preview.release()
     }
 
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
-        if (context is OnBarcodeDetectedListener) {
-            this._barcodeDetectedListener = context
-        } else {
-//            throw RuntimeException(context!!.toString() + " must implement OnFragmentInteractionListener")
-        }
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-        this._barcodeDetectedListener = null
-    }
 
     //==============================================================================================
     // BarcodeGraphicTracker.BarcodeUpdateListener
@@ -94,9 +74,6 @@ class BarcodeCaptureFragment : Fragment(), BarcodeGraphicTracker.BarcodeUpdateLi
         // 複数回イベントを送信しないよう、フラグで管理する
         if (!_detected) {
             EventBus.getDefault().post(BarcodeDetectEvent(barcode?.displayValue?: ""))
-//            activity?.runOnUiThread({
-//                _barcodeDetectedListener?.onBarcodeDetected(barcode?.displayValue)
-//            })
         }
         _detected = true
     }

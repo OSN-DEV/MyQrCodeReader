@@ -44,19 +44,12 @@ class AppDatabase(context: Context) : SQLiteOpenHelper(context, "app_data.db", n
      * @return id
      */
     fun createHistory(displayValue: String): Long {
-        var id: Long = -1
+        val id: Long
         val database = writableDatabase
         try {
             database.beginTransaction()
 
             val sql = StringBuilder()
-//            sql.append("INSERT INTO read_histories(")
-//            sql.append(" site_icon")
-//            sql.append(",site_name")
-//            sql.append(",display_value")
-//            sql.append(",read_date")
-//            sql.append(") values (?,?,?)")
-//            database.execSQL(sql.toString(), arrayOf(null, null, displayValue, System.currentTimeMillis()))
             val values = ContentValues()
             values.put("display_value", displayValue)
             values.put("read_date", System.currentTimeMillis())
