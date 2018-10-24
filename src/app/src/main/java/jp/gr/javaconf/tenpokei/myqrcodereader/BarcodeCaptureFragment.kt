@@ -13,6 +13,8 @@ import com.google.android.gms.vision.MultiProcessor
 import com.google.android.gms.vision.barcode.Barcode
 import com.google.android.gms.vision.barcode.BarcodeDetector
 import jp.gr.javaconf.tenpokei.myqrcodereader.barcode.*
+import jp.gr.javaconf.tenpokei.myqrcodereader.event.BarcodeDetectEvent
+import org.greenrobot.eventbus.EventBus
 import java.io.IOException
 
 /**
@@ -91,9 +93,10 @@ class BarcodeCaptureFragment : Fragment(), BarcodeGraphicTracker.BarcodeUpdateLi
         // この時点で _preview を破棄(release or stop)すると次回の起動時にstartCameraSourceが応答なしになるので
         // 複数回イベントを送信しないよう、フラグで管理する
         if (!_detected) {
-            activity?.runOnUiThread({
-                _barcodeDetectedListener?.onBarcodeDetected(barcode?.displayValue)
-            })
+            EventBus.getDefault().post(BarcodeDetectEvent(barcode?.displayValue?: ""))
+//            activity?.runOnUiThread({
+//                _barcodeDetectedListener?.onBarcodeDetected(barcode?.displayValue)
+//            })
         }
         _detected = true
     }

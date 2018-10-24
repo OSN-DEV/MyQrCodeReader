@@ -1,5 +1,6 @@
 package jp.gr.javaconf.tenpokei.myqrcodereader
 
+import android.content.Intent
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
@@ -13,6 +14,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import com.github.kittinunf.fuel.httpGet
 import com.github.kittinunf.result.Result
 import jp.gr.javaconf.tenpokei.myqrcodereader.data.AppDatabase
@@ -53,6 +55,8 @@ class CaptureResultFragment : Fragment() {
         _displayValue = view.findViewById(R.id.display_value)
         _siteName = view.findViewById(R.id.site_name)
         _siteIcon = view.findViewById(R.id.site_icon)
+
+        view.findViewById<TextView>(R.id.launch).setOnClickListener { launchApps() }
         view.findViewById<TextView>(R.id.scan_barcode).setOnClickListener { EventBus.getDefault().post(ScanBarcodeEvent()) }
         return view
     }
@@ -141,6 +145,25 @@ class CaptureResultFragment : Fragment() {
             }
         } catch (ex: Exception) {
             Log.e(TAG, ex.message, ex)
+        }
+    }
+
+    /**
+     * launch app uses implicit Intent
+     */
+    private fun launchApps() {
+        val displayValue = _displayValue.text
+        if (displayValue.isEmpty()) {
+            Log.d(TAG, "display value is empty")
+            return
+        }
+
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.data = Uri.parse(displayValue!!.toString())
+        try {
+            startActivity(intent)
+        } catch (ex: Exception) {
+            Toast.makeText(activity, R.string.error_message_launch_failed, Toast.LENGTH_SHORT).show()
         }
     }
 

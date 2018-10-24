@@ -14,6 +14,7 @@ import android.support.v7.app.AppCompatActivity
 import android.view.Gravity
 import android.view.MenuItem
 import android.widget.Toast
+import jp.gr.javaconf.tenpokei.myqrcodereader.event.BarcodeDetectEvent
 import jp.gr.javaconf.tenpokei.myqrcodereader.event.RefreshScanResultEvent
 import jp.gr.javaconf.tenpokei.myqrcodereader.event.ScanBarcodeEvent
 import org.greenrobot.eventbus.EventBus
@@ -63,12 +64,15 @@ class MyQrCodeReaderMainActivity : AppCompatActivity(), CommonDialogFragment.OnC
             setDrawerShadow(R.drawable.drawer_shadow, Gravity.START)
         }
         actionBar.run {
+            actionBar?.setLogo(R.mipmap.ic_launcher)
+            actionBar?.setHomeAsUpIndicator(R.mipmap.ic_launcher)
             actionBar?.setDisplayHomeAsUpEnabled(true)
             actionBar?.setHomeButtonEnabled(true)
+            actionBar?.setDisplayUseLogoEnabled(true)
         }
         _drawerToggle = object : ActionBarDrawerToggle(this, _drawerLayout, R.string.drawer_open, R.string.drawer_close) {}
         _drawerLayout.addDrawerListener(_drawerToggle)
-
+        _drawerToggle.syncState()
         // setup permission(only once)
         if (null == savedInstanceState) {
             this.setupPermission()
@@ -171,7 +175,7 @@ class MyQrCodeReaderMainActivity : AppCompatActivity(), CommonDialogFragment.OnC
     override fun onBarcodeDetected(displayValue: String?) {
         supportFragmentManager.popBackStack()
         if (null == displayValue) {
-            Toast.makeText(this, R.string.error_capture, Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, R.string.error_message_capture_failed, Toast.LENGTH_SHORT).show()
         } else {
             EventBus.getDefault().postSticky(RefreshScanResultEvent(displayValue))
         }
@@ -181,10 +185,25 @@ class MyQrCodeReaderMainActivity : AppCompatActivity(), CommonDialogFragment.OnC
     //==============================================================================================
     // EventBus
     //==============================================================================================
-    @SuppressWarnings("unused")
+    /**
+     * this event is fired when scan barcode button clicked.
+     */
+    @Suppress("unused")
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
-    fun onMessageEvent(eventRefresh: ScanBarcodeEvent) {
+    fun onMessageEvent(@Suppress("UNUSED_PARAMETER") event: ScanBarcodeEvent) {
         setupCaptureFragment()
+    }
+
+    /**
+     * this event is fired when barcode detected
+     */
+    @Suppress("unused")
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onMessageEvent(event: BarcodeDetectEvent) {
+        // CaptureResultFragment does not receive this event directly,
+        // because need to pop BarcodeCaptureFragment
+        supportFragmentManager.popBackStack()
+        EventBus.getDefault().postSticky(RefreshScanResultEvent(event.displayValue))
     }
 
 

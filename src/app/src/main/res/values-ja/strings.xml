@@ -18,5 +18,6 @@
     <!-- error message -->
     <string name="error_message_permission_denied">カメラの使用権限がないためアプリを終了します。</string>
     <string name="error_message_unavailable_camera">カメラの使用権限がないためアプリを終了します。システムの設定を確認してください。\n\nシステムの設定画面を開きますか？</string>
-    <string name="error_capture">バーコードの読取りに失敗しました</string>
+    <string name="error_message_capture_failed">バーコードの読取りに失敗しました。</string>
+    <string name="error_message_launch_failed">アプリの起動に失敗しました。</string>
 </resources>
