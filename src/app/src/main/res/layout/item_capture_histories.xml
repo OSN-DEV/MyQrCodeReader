@@ -1,0 +1,86 @@
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  android:background="@color/white">
+
+
+  <android.support.constraint.Guideline
+    android:id="@+id/guide_top"
+    style="@style/HorizontalGuideLineBase"
+    app:layout_constraintGuide_percent="0.10"/>
+
+  <android.support.constraint.Guideline
+    android:id="@+id/guide_bottom"
+    style="@style/HorizontalGuideLineBase"
+    app:layout_constraintGuide_percent="0.90"/>
+
+  <android.support.constraint.Guideline
+    android:id="@+id/guide_start"
+    style="@style/VerticalGuideLineBase"
+    app:layout_constraintGuide_percent="0.05"/>
+
+  <android.support.constraint.Guideline
+    android:id="@+id/guide_end"
+    style="@style/VerticalGuideLineBase"
+    app:layout_constraintGuide_percent="0.95"/>
+
+
+  <TextView
+    android:id="@+id/read_date"
+    style="@style/TextViewBase"
+    android:paddingStart="0dp"
+    android:textColor="@color/silver"
+    android:textSize="@dimen/font_smaller"
+    app:layout_constraintStart_toStartOf="@+id/guide_start"
+    app:layout_constraintTop_toTopOf="@+id/guide_top"
+    tools:text="2018/10/25 16:38"/>
+
+  <TextView
+    android:id="@+id/display_value"
+    style="@style/TextViewBase"
+    android:layout_width="0dp"
+    android:paddingStart="0dp"
+    app:layout_constraintEnd_toEndOf="@+id/guide_end"
+    app:layout_constraintStart_toStartOf="@+id/guide_start"
+    app:layout_constraintTop_toBottomOf="@+id/read_date"
+    tools:text="https://qiita.com/saiki-ii/items/78ed73134784f3e5db7eaaaaaaaaaaaaaaaaaaaaaaaaaa"/>
+
+
+
+  <LinearLayout
+    android:id="@+id/web_page_container"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    app:layout_constraintEnd_toEndOf="@+id/guide_end"
+    app:layout_constraintStart_toStartOf="@+id/guide_start"
+    app:layout_constraintTop_toBottomOf="@+id/display_value">
+
+    <ImageView
+      android:id="@+id/site_icon"
+      android:layout_width="15dp"
+      android:layout_height="15dp"
+      android:layout_gravity="center_vertical"
+      android:visibility="visible"/>
+
+    <TextView
+      android:id="@+id/site_name"
+      style="@style/TextViewBase"
+      android:layout_width="wrap_content"
+      android:ellipsize="end"
+      android:maxLines="1"
+      android:textColor="@color/silver"
+      android:textSize="@dimen/font_smaller"
+      android:visibility="visible"
+      tools:text="Google"/>
+  </LinearLayout>
+
+  <TextView
+    android:layout_width="match_parent"
+    android:layout_height="1dp"
+    android:layout_marginTop="5dp"
+    android:background="@color/silver"
+    app:layout_constraintTop_toBottomOf="@+id/web_page_container"/>
+</android.support.constraint.ConstraintLayout>

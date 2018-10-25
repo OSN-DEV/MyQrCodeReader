@@ -1,0 +1,32 @@
+<resources>
+  <string name="app_name">My QR Code Reader</string>
+
+  <string name="drawer_open">open</string>
+  <string name="drawer_close">close</string>
+
+  <!-- side menu -->
+  <string name="side_menu_recent">recent</string>
+  <string name="side_menu_favorite">favorite</string>
+  <string name="side_menu_licence">license</string>
+
+  <!-- dialog -->
+  <string name="dialog_button_ok">OK</string>
+  <string name="dialog_button_cancel">Cancel</string>
+  <string name="dialog_button_yes">Yes</string>
+  <string name="dialog_button_no">No</string>
+  <string name="dialog_title_error">Error</string>
+
+  <!-- caption -->
+  <string name="caption_launch">launch</string>
+  <string name="caption_read_barcode">read barcode</string>
+  <string name="caption_space"> </string>
+
+  <!-- error message -->
+  <string name="error_message_permission_denied">App exits because "use camera" permission is not granted.</string>
+  <string name="error_message_unavailable_camera">App exits because "use camera" permission is not granted.\nPlease check system setting. Shall we open the system setting?</string>
+  <string name="error_message_capture_failed">failed to capture</string>
+  <string name="error_message_launch_failed">failed to capture</string>
+
+  <!-- TODO: Remove or change this placeholder text -->
+  <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>

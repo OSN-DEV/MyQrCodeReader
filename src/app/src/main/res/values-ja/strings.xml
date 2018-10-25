@@ -1,0 +1,23 @@
+<resources>
+    <!-- side menu -->
+    <string name="side_menu_recent">最近の読取アイテム</string>
+    <string name="side_menu_favorite">お気に入り</string>
+    <string name="side_menu_licence">ライセンス</string>
+
+    <!-- dialog -->
+    <string name="dialog_button_ok">OK</string>
+    <string name="dialog_button_cancel">キャンセル</string>
+    <string name="dialog_button_yes">はい</string>
+    <string name="dialog_button_no">いいえ</string>
+    <string name="dialog_title_error">エラー</string>
+
+    <!-- caption -->
+    <string name="caption_launch">アプリ起動</string>
+    <string name="caption_read_barcode">バーコードの読取り</string>
+
+    <!-- error message -->
+    <string name="error_message_permission_denied">カメラの使用権限がないためアプリを終了します。</string>
+    <string name="error_message_unavailable_camera">カメラの使用権限がないためアプリを終了します。システムの設定を確認してください。\n\nシステムの設定画面を開きますか？</string>
+    <string name="error_message_capture_failed">バーコードの読取りに失敗しました。</string>
+    <string name="error_message_launch_failed">アプリの起動に失敗しました。</string>
+</resources>
