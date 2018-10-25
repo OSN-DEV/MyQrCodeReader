@@ -1,18 +1,18 @@
 package jp.gr.javaconf.tenpokei.myqrcodereader
 
-import android.content.Context
-import android.os.Build
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.support.v4.content.ContextCompat
+import android.view.*
+import android.widget.Toast
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
-import com.google.android.gms.vision.MultiProcessor
+import com.google.android.gms.vision.CameraSource
+import com.google.android.gms.vision.Detector
 import com.google.android.gms.vision.barcode.Barcode
 import com.google.android.gms.vision.barcode.BarcodeDetector
-import jp.gr.javaconf.tenpokei.myqrcodereader.barcode.*
 import jp.gr.javaconf.tenpokei.myqrcodereader.event.BarcodeDetectEvent
 import org.greenrobot.eventbus.EventBus
 import java.io.IOException
@@ -20,62 +20,38 @@ import java.io.IOException
 /**
  * capture barcode
  */
-class BarcodeCaptureFragment : Fragment(), BarcodeGraphicTracker.BarcodeUpdateListener {
-
+class BarcodeCaptureFragment : Fragment() {
     // Barcode reader sample(GitHub)
     // https://github.com/googlesamples/android-vision/tree/master/visionSamples/barcode-reader
 
-    // AndroidでQRコードをリーダーを作る（超シンプル版）
-    // https://dev.eyewhale.com/archives/1372
+    // Mobile Vision Barcode APIを用いたバーコード機能の実装方法
+    // http://rozkey.hatenablog.com/entry/2018/03/26/225014
 
     //==============================================================================================
     // Declaration
     //==============================================================================================
     private var _cameraSource: CameraSource? = null
-    private lateinit var _preview: CameraSourcePreview
-    private lateinit var _overlay: GraphicOverlay<BarcodeGraphic>
+    private lateinit var _preview: SurfaceView
     private var _detected: Boolean = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
         val parent = inflater.inflate(R.layout.fragment_barcode_capture, container, false)
-
-        // set up preview
-        _preview = parent.findViewById(R.id.preview)
-        _overlay = parent.findViewById(R.id.graphic_overlay)
-        this.setupCameraSource()
-
-        // Inflate the layout for this fragment
+        _preview= parent.findViewById(R.id.preview)
         return parent
     }
 
+
+    //==============================================================================================
+    // Fragment
+    //==============================================================================================
     override fun onResume() {
         super.onResume()
-        startCameraSource()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        _preview.stop()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        _preview.release()
-    }
-
-
-    //==============================================================================================
-    // BarcodeGraphicTracker.BarcodeUpdateListener
-    //==============================================================================================
-    override fun onBarcodeDetected(barcode: Barcode?) {
-        // この時点で _preview を破棄(release or stop)すると次回の起動時にstartCameraSourceが応答なしになるので
-        // 複数回イベントを送信しないよう、フラグで管理する
-        if (!_detected) {
-            EventBus.getDefault().post(BarcodeDetectEvent(barcode?.displayValue?: ""))
+        if (null == _cameraSource) {
+            this.setupCameraSource()
         }
-        _detected = true
+        this.startCameraSource()
     }
 
 
@@ -83,39 +59,30 @@ class BarcodeCaptureFragment : Fragment(), BarcodeGraphicTracker.BarcodeUpdateLi
     // Private method
     //==============================================================================================
     /*
-     * set up camera
+     * set up camera source
      */
     private fun setupCameraSource() {
-        // BarcodeDetector : Recognizes barcodes (in a variety of 1D and 2D formats) in a supplied Frame
-        val barcodeDetector = BarcodeDetector.Builder(activity?.applicationContext).build()
-        val barcodeFactory = BarcodeTrackerFactory(_overlay, this)
-        barcodeDetector.setProcessor(MultiProcessor.Builder(barcodeFactory).build())
-
-//        if (!barcodeDetector.isOperational()) {
-//            // 初めてバーコードやface APIなどを利用する場合、GMSは必要なライブラリをダウンロードするらしい。
-//            // 通常はアプリ起動時にダウンロードは完了しているはずらしい。もし完了してなければバーコード等の読取りが出来ない。
-//            // ※ネットで調べてもOfflineで動く・動かないの意見が別れているっぽい。おそらく端末内にあるかどうか、という話なんだろうなと
-//            // → Google Play開発者サービスが最新であれば、おそらく問題なく動く気がする。
-//
-//            // 以下は端末の空き容量の判定処理。このif文に入るケースは気にしなくても良い気がするのでエラーハンドリングはしない
-//            if (cacheDir.usableSpace * 100 / cacheDir.totalSpace <= 10) { // Alternatively, use cacheDir.freeSpace
-//                // Handle storage low state
-//            } else {
-//                // Handle storage ok state
-//            }
-//        }
-
-        val builder = CameraSource.Builder(activity?.applicationContext, barcodeDetector).apply {
+        val barcodeDetector = BarcodeDetector.Builder(activity?.applicationContext)
+                .setBarcodeFormats(Barcode.QR_CODE)
+                .build()
+        barcodeDetector.setProcessor(object : Detector.Processor<Barcode>  {
+            override fun release() {
+            }
+            override fun receiveDetections(detections: Detector.Detections<Barcode>) {
+                if (detections.detectedItems.size() != 0)
+                    if (!_detected) {
+                        EventBus.getDefault().post(BarcodeDetectEvent(detections.detectedItems.valueAt(0).rawValue))
+                        _detected = true
+                    }
+            }
+        })
+        _cameraSource = CameraSource.Builder(activity?.applicationContext, barcodeDetector).apply {
             setFacing(CameraSource.CAMERA_FACING_BACK)
             setRequestedPreviewSize(1600, 1024)
             setRequestedFps(15.0f)
-            if (Build.VERSION_CODES.ICE_CREAM_SANDWICH <= Build.VERSION.SDK_INT) {
-                setFocusMode(CameraSource.FOCUS_MODE_AUTO)
-            }
-        }
-        _cameraSource = builder.build()
+            setAutoFocusEnabled(true)
+        }.build()
     }
-
 
     /*
      * start tracking
@@ -125,21 +92,43 @@ class BarcodeCaptureFragment : Fragment(), BarcodeGraphicTracker.BarcodeUpdateLi
         // check that the device has play services available.
         val code = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(activity?.applicationContext)
         if (code != ConnectionResult.SUCCESS) {
-            val dlg = GoogleApiAvailability.getInstance().getErrorDialog(activity, code, 9999)
-            dlg.show()
+            GoogleApiAvailability.getInstance().getErrorDialog(activity, code, 9999).show()
+            return
         }
 
-        if (_cameraSource != null) {
-            try {
-                _preview.start(_cameraSource, _overlay)
-            } catch (e: IOException) {
-                _cameraSource?.release()
-                _cameraSource = null
+        _preview.holder.addCallback(object: SurfaceHolder.Callback {
+            override fun surfaceCreated(holder: SurfaceHolder?) {
+                try {
+                    // app check permission when app launch, but need to check agaimn because of compile error
+                    if (context?.let { ContextCompat.checkSelfPermission(it, Manifest.permission.CAMERA) }
+                            == PackageManager.PERMISSION_GRANTED) {
+                        _cameraSource?.start(holder)
+                    } else {
+                        activity?.runOnUiThread {
+                            Toast.makeText(activity, R.string.error_message_permission_denied, Toast.LENGTH_SHORT).show()
+                            activity?.finish()
+                        }
+                    }
+                } catch (e: IOException) {
+                    _cameraSource?.release()
+                    _cameraSource = null
+                }
             }
-        }
+            override fun surfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) {
+            }
+            override fun surfaceDestroyed(holder: SurfaceHolder?) {
+                if (_cameraSource != null) {
+                    _cameraSource?.release()
+                    _cameraSource = null
+                }
+            }
+        })
     }
 
 
+    //==============================================================================================
+    // Static
+    //==============================================================================================
     companion object {
         /*
          * create a fragment instance.

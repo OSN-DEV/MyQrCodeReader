@@ -7,6 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
 import android.widget.TextView
+import jp.gr.javaconf.tenpokei.myqrcodereader.event.SideMenuSelectedEvent
+import org.greenrobot.eventbus.EventBus
 
 
 /**
@@ -14,24 +16,18 @@ import android.widget.TextView
  */
 class SideMenuFragment : Fragment() {
 
-    /**
-     * use for identifying to which button is pressed.
-     */
-    enum class MenuItemType(val rawValue: Int) {
-        Recent(1),
-        Favorite(2),
-        License(3)
-    }
-
     //==============================================================================================
     // Fragment
     //==============================================================================================
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         val view = inflater.inflate(R.layout.fragment_side_menu, container, false)
-        view.findViewById<TextView>(R.id.side_menu_recent).setOnClickListener { onMenuItemClicked(MenuItemType.Recent) }
-        view.findViewById<TextView>(R.id.side_menu_favorite).setOnClickListener { onMenuItemClicked(MenuItemType.Favorite) }
-        view.findViewById<TextView>(R.id.side_menu_license).setOnClickListener { onMenuItemClicked(MenuItemType.License) }
+        view.findViewById<TextView>(R.id.side_menu_recent).setOnClickListener {
+            EventBus.getDefault().post(SideMenuSelectedEvent(SideMenuSelectedEvent.MenuItemType.Recent))
+        }
+        view.findViewById<TextView>(R.id.side_menu_license).setOnClickListener {
+            EventBus.getDefault().post(SideMenuSelectedEvent(SideMenuSelectedEvent.MenuItemType.License))
+        }
         view.findViewById<TextView>(R.id.app_version).text = BuildConfig.VERSION_NAME
         return view
     }
@@ -45,15 +41,5 @@ class SideMenuFragment : Fragment() {
          */
         @JvmStatic
         fun newInstance() = SideMenuFragment()
-    }
-
-
-    //==============================================================================================
-    // private method
-    //==============================================================================================
-    private fun onMenuItemClicked(type: MenuItemType) {
-        val menu = PopupMenu(activity, null).menu
-        val item = menu.add(0, type.rawValue, 0, "")
-        activity?.onOptionsItemSelected(item)
     }
 }

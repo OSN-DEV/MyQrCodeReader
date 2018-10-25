@@ -13,16 +13,19 @@ import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.view.Gravity
 import android.view.MenuItem
-import android.widget.Toast
+import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import jp.gr.javaconf.tenpokei.myqrcodereader.event.BarcodeDetectEvent
 import jp.gr.javaconf.tenpokei.myqrcodereader.event.RefreshScanResultEvent
 import jp.gr.javaconf.tenpokei.myqrcodereader.event.ScanBarcodeEvent
+import jp.gr.javaconf.tenpokei.myqrcodereader.event.SideMenuSelectedEvent
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
+/**
+ * app main activity. handling capture, show captured result and recent captured list
+ */
 class MyQrCodeReaderMainActivity : AppCompatActivity(), CommonDialogFragment.OnCommonDialogFragmentListener {
-
     // アイコンのサイズ
     // https://backport.net/blog/2018/02/17/adaptive_icon/
 
@@ -32,8 +35,12 @@ class MyQrCodeReaderMainActivity : AppCompatActivity(), CommonDialogFragment.OnC
     // 少し親切なランタイムパーミッション対応
     // https://qiita.com/caad1229/items/35bab757217b204711df
 
-    // AndroidでQRコードをリーダーを作る（超シンプル版）
-    // https://dev.eyewhale.com/archives/1372
+    // Androidアプリにライセンス表示を埋め込むライブラリいくつか
+    // https://qiita.com/tyoro/items/f7045cea7cf5d98a80b9
+
+    // com.google.gms:oss-licenses を使ってオープンソースライセンスを表示する
+    // https://qiita.com/sho5nn/items/f63ebd7ccc0c86d98e4b
+
 
     private lateinit var _drawerLayout: DrawerLayout
     private lateinit var _drawerToggle: ActionBarDrawerToggle
@@ -94,28 +101,12 @@ class MyQrCodeReaderMainActivity : AppCompatActivity(), CommonDialogFragment.OnC
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        // this check is necessary. if delete, navigation drawer is not shown
+        // when humberger button tapped.
         if (_drawerToggle.onOptionsItemSelected(item)) {
             // home is selected
             return true
         }
-        when (item?.itemId) {
-            SideMenuFragment.MenuItemType.Recent.rawValue -> {
-                Toast.makeText(this, "Recent", Toast.LENGTH_SHORT).show()
-                _drawerLayout.closeDrawer(Gravity.START)
-                return true
-            }
-            SideMenuFragment.MenuItemType.Favorite.rawValue -> {
-                Toast.makeText(this, "Favorite", Toast.LENGTH_SHORT).show()
-                _drawerLayout.closeDrawer(Gravity.START)
-                return true
-            }
-            SideMenuFragment.MenuItemType.License.rawValue -> {
-                Toast.makeText(this, "License", Toast.LENGTH_SHORT).show()
-                _drawerLayout.closeDrawer(Gravity.START)
-                return true
-            }
-        }
-
         return super.onOptionsItemSelected(item)
     }
 
@@ -189,6 +180,27 @@ class MyQrCodeReaderMainActivity : AppCompatActivity(), CommonDialogFragment.OnC
         // because need to pop BarcodeCaptureFragment
         supportFragmentManager.popBackStack()
         EventBus.getDefault().postSticky(RefreshScanResultEvent(event.displayValue))
+    }
+
+
+    /**
+     * this event is fired when barcode detected
+     */
+    @Suppress("unused")
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onMessageEvent(event: SideMenuSelectedEvent) {
+        _drawerLayout.closeDrawer(Gravity.START)
+        when(event.getItemType()) {
+            SideMenuSelectedEvent.MenuItemType.License -> {
+                val intent = Intent(this, OssLicensesMenuActivity::class.java)
+                intent.putExtra("title", "OSS license")
+                startActivity(intent)
+            }
+
+            SideMenuSelectedEvent.MenuItemType.Recent -> {
+
+            }
+        }
     }
 
 

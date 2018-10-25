@@ -25,26 +25,16 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.2" />
 
-    <jp.gr.javaconf.tenpokei.myqrcodereader.barcode.CameraSourcePreview
-        android:id="@+id/preview"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="30dp"
-        app:layout_constraintDimensionRatio="h,3:4"
-        app:layout_constraintEnd_toStartOf="@+id/guideline_preview_right"
-        app:layout_constraintStart_toStartOf="@+id/guideline_preview_left"
-        app:layout_constraintTop_toBottomOf="@id/guideline_preview_top"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <jp.gr.javaconf.tenpokei.myqrcodereader.barcode.GraphicOverlay
-            android:id="@+id/graphic_overlay"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-    </jp.gr.javaconf.tenpokei.myqrcodereader.barcode.CameraSourcePreview>
+    <SurfaceView
+      android:id="@+id/preview"
+      android:layout_width="0dp"
+      android:layout_height="0dp"
+      android:layout_marginTop="30dp"
+      app:layout_constraintDimensionRatio="h,3:4"
+      app:layout_constraintEnd_toStartOf="@+id/guideline_preview_right"
+      app:layout_constraintStart_toStartOf="@+id/guideline_preview_left"
+      app:layout_constraintTop_toBottomOf="@id/guideline_preview_top"
+      app:layout_constraintTop_toTopOf="parent"/>
 
     <android.support.constraint.Guideline
         android:id="@+id/guideline_result"
