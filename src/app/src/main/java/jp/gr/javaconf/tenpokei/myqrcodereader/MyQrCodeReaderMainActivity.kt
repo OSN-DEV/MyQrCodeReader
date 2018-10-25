@@ -7,6 +7,7 @@ import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
+import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
@@ -72,7 +73,7 @@ class MyQrCodeReaderMainActivity : AppCompatActivity(), CommonDialogFragment.OnC
         }
         supportActionBar.run {
             supportActionBar?.setDisplayShowHomeEnabled(true)
-            supportActionBar?.setDisplayHomeAsUpEnabled(true)
+            supportActionBar?.setDisplayHomeAsUpEnabled(false)
         }
 
         _drawerToggle = object : ActionBarDrawerToggle(this, _drawerLayout, R.string.drawer_open, R.string.drawer_close) {}
@@ -81,6 +82,12 @@ class MyQrCodeReaderMainActivity : AppCompatActivity(), CommonDialogFragment.OnC
         // setup permission(only once)
         if (null == savedInstanceState) {
             this.setupPermission()
+        }
+
+        supportFragmentManager.addOnBackStackChangedListener {
+            val count =  supportFragmentManager.backStackEntryCount
+            supportActionBar?.setDisplayShowHomeEnabled(count == 0)
+            supportActionBar?.setDisplayHomeAsUpEnabled(count == 0)
         }
     }
 
@@ -121,7 +128,7 @@ class MyQrCodeReaderMainActivity : AppCompatActivity(), CommonDialogFragment.OnC
         if (_permissionRequestCamera == requestCode && grantResults.isNotEmpty()) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // permission granted
-                this.setupCaptureFragment()
+                this.setupFragment(BarcodeCaptureFragment.newInstance())
             } else {
                 // show error
                 CommonDialogFragment.show(supportFragmentManager, DialogId.PermissionDenied.rawValue,
@@ -167,7 +174,7 @@ class MyQrCodeReaderMainActivity : AppCompatActivity(), CommonDialogFragment.OnC
     @Suppress("unused")
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     fun onMessageEvent(@Suppress("UNUSED_PARAMETER") event: ScanBarcodeEvent) {
-        setupCaptureFragment()
+        this.setupFragment(BarcodeCaptureFragment.newInstance())
     }
 
     /**
@@ -198,7 +205,7 @@ class MyQrCodeReaderMainActivity : AppCompatActivity(), CommonDialogFragment.OnC
             }
 
             SideMenuSelectedEvent.MenuItemType.Recent -> {
-
+                setupFragment(CaptureHistoriesFragment.newInstance())
             }
         }
     }
@@ -221,16 +228,17 @@ class MyQrCodeReaderMainActivity : AppCompatActivity(), CommonDialogFragment.OnC
             }
         } else {
             // permission granted
-            this.setupCaptureFragment()
+            this.setupFragment(BarcodeCaptureFragment.newInstance())
         }
     }
 
-    /*
-     * set up capture fragment
+    /**
+     * set up fragment
+     * @param fragment fragment
      */
-    private fun setupCaptureFragment() {
+    private fun setupFragment(fragment : Fragment) {
         val transaction = supportFragmentManager.beginTransaction()
-        transaction.replace(R.id.container, BarcodeCaptureFragment.newInstance())
+        transaction.replace(R.id.container, fragment)
         transaction.addToBackStack(null)
         transaction.commit()
     }

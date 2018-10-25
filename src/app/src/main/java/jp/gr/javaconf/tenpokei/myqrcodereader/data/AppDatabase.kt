@@ -2,6 +2,7 @@ package jp.gr.javaconf.tenpokei.myqrcodereader.data
 
 import android.content.ContentValues
 import android.content.Context
+import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import java.lang.StringBuilder
@@ -111,5 +112,22 @@ class AppDatabase(context: Context) : SQLiteOpenHelper(context, "app_data.db", n
         } finally {
             database.endTransaction()
         }
+    }
+
+    /**
+     * select all data. sort order is read_date.
+     */
+    fun readAll() : Cursor {
+        val database = readableDatabase
+
+        val sql = StringBuilder()
+        sql.append("select")
+        sql.append(" read_date")
+        sql.append(",display_value")
+        sql.append(",site_icon")
+        sql.append(",site_name")
+        sql.append(" from read_histories")
+        sql.append(" order by read_date desc");
+        return database.rawQuery(sql.toString(), null, null)
     }
 }

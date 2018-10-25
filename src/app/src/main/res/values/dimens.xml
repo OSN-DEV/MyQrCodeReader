@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <dimen name="font_larger">20sp</dimen> <!-- default font size of all view -->
-    <dimen name="font_default">18sp</dimen> <!-- default font size of all view -->
+    <dimen name="font_larger">20sp</dimen>
+    <dimen name="font_default">18sp</dimen>
+    <dimen name="font_smaller">16sp</dimen>
 
     <dimen name="side_menu_width">240dp</dimen>  <!-- side menu width -->
 
